@@ -1,8 +1,7 @@
 const R = require('ramda');
 
-function interval(min, max, step) {
+function numeric(name, min, max, step) {
   [min, max, step].forEach(x => {
-    if (isNaN(x)) throw new Error(`All parameters of interval() must be numbers. Got ${typeof x}`);
   });
 
   return function *() {
@@ -12,23 +11,23 @@ function interval(min, max, step) {
   }
 }
 
-function listerval(s) {
+function list(name, s) {
 
   return function*() {
     for (let i = 0; i < s.length; i++) {
-      yield s[i];
+      yield  s[i];
     }
   }
 }
 
-function boolerval() {
+function boolean(name) {
   return function*() {
-    yield true;
+    yield  true;
     return false;
   }
 }
 
-function getNextNItems(n, iterator) {
+function takeNext(n, iterator) {
   const a = [];
   for (let i = 0; i < n; i++) {
     a.push(iterator.next().value);
@@ -46,32 +45,36 @@ function increment(state) {
   return state;
 }
 
-
-function *lazyCartesianProduct(...iteratorFuncs) {
-  let state = {
-    done: false,
-    iterators: iteratorFuncs.map(f => f()),
-    values: this.iterators.map(i => i.next())
-  };
-
-  yield state.values.map(v => v.value);
-
-  while (!state.done) {
-    R.pipe(
-      increment,
-      checkDone,
-      render
-    )
-  }
-
-
+function reset(val) {
+  return iterators[val]().next();
 }
 
 
+function *lazyCartesianProduct(iteratorFuncs) {
+  const iterators = R.map(f => f(), iteratorFuncs);
+  const values =   R.map(i => i.next())(iterators);
+
+  yield R.map(v => v.value, values);
+
+  while (true) {
+    yield R.pipe(
+      R.keys, // extract key arrays
+      R.map(x => [x, values[x]]), // convert values into array of key-value pairs
+      R.splitWhen(val => !val[1].done),// find initial done iterators
+      R.over(R.lensIndex(0), R.map(reset)),// reset all done iterators
+      R.over(R.lensPath([1, 0]), pair => [ pair[0], iterators[pair[0]].next()]), //increment the first not-done iterator
+      R.unnest, //flatten the array
+      R.map(R.pipe(R.over(R.lensIndex(1), v => v.value))) //extract the value of each iterator
+      // R.reduce()
+    )(values)
+  }
+
+}
+
 module.exports = {
-  takeNext: (n, iterator) => getNextNItems(n, iterator),
-  interval: interval,
-  listerval: listerval,
-  boolerval: boolerval,
-  lazyCartesianProduct: lazyCartesianProduct
+  takeNext,
+  numeric,
+  list,
+  boolean,
+  lazyCartesianProduct
 };

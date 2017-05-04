@@ -10,12 +10,15 @@ describe('index', () => {
   });
 
   describe('takeNext', () => {
-      it('xxx',() => {
-        let booler = sut.boolerval();
-        let lister = sut.listerval(['1','2', '3']);
-        let inter = sut.interval(0, 10, 2);
-        let carteser = sut.lazyCartesianProduct(booler, lister, inter);
-        sut.takeNext(20, carteser).should.eql([2]);
-      });
+    it('yyy', () => {
+      generators = {
+        list: sut.list('list', [1, 2, 3]),
+        boole: sut.boolean('boole'),
+        num: sut.numeric('num', 0, 10, 2)
+      }
+      const carteser = sut.lazyCartesianProduct(generators);
+      sut.takeNext(2, carteser).should.eql([1, 2, 3])
+    });
   });
 });
+
