@@ -1,5 +1,12 @@
 const R = require('ramda');
 
+/**
+ * The Sources class stores the sources for the generators, so that each generator can
+ * be rebooted from the same source. Each source consists of a `name`, a `type`, and a
+ * (possibly empty, as in the case of booleans) `value`. Possible types are `list`, `numeric`,
+ * and `boolean`.  The values for `list`s must be an array. The values for `numeric`s must
+ * be an object with `min`, `max`, and `step` properties, each of which must me ints.
+ */
 class Sources {
   list(name, value) {
     this[name] = { type: 'list', value };
@@ -14,8 +21,19 @@ class Sources {
   }
 }
 
+/**
+ * Class with generator methods to generate iterators of the three types `numeric`,
+ * `list`, and `boolean`.
+ */
 class Generators {
 
+  /**
+   * Generator for a numeric iterator with min, max values and step dictating difference
+   * between each value yielded.
+   *
+   * @param value
+   * @returns int
+   */
   * numeric(value) {
     for (let n = value.min; n < value.max; n = value.step + n) {
       yield n;
@@ -23,8 +41,13 @@ class Generators {
     return value.max;
   }
 
+  /**
+   * Generator for array iterator, taking an array parameter.
+   *
+   * @param l (array)
+   * @returns x (array member)
+   */
   * list(l) {
-    console.log("L", l)
     const s = l.slice()
     while (s.length > 1) {
       yield s.shift();
@@ -32,6 +55,11 @@ class Generators {
     return s[0];
   }
 
+  /**
+   * Generator for boolean iterator. Yields `true`, then `false`.
+   * @returns {boolean}. We need to *return* the last value in order to set
+   * `done` to true.
+   */
   * boolean() {
     let bool = true;
     while (bool) {
@@ -58,6 +86,11 @@ function takeNext(n, iterator) {
 
 const getVal = R.map(R.prop('value'));
 
+/**
+ *
+ * @param sources
+ * @returns array
+ */
 function *lazyCartesian(sources) {
   let allDone = false;
   const iterators = R.map(s => generators[s.type](s.value), sources);
@@ -67,8 +100,7 @@ function *lazyCartesian(sources) {
 
   const recurse = (pair) => {
     iterators[pair[0]] = generators[sources[pair[0]].type](sources[pair[0]].value);
-    const r = [pair[0], iterators[pair[0]].next()];
-    return r;
+    return [pair[0], iterators[pair[0]].next()];
   };
 
   while (!allDone) {
