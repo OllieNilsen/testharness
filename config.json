@@ -1,0 +1,121 @@
+{
+  "throttle":{
+    "delay": 3000,
+    "batchSize": 5
+  },
+  "rfqProperties": [
+    {
+      "name": "loanAmount",
+      "type": "numeric",
+      "value": {
+        "min": 0,
+        "max": 100000,
+        "step": 500
+      }
+    },
+    {
+      "name": "loanCurrency",
+      "type": "list",
+      "value": ["GBP","EUR"]
+    },
+    {
+      "name": "termPeriod",
+      "type": "list",
+      "value": ["years","months","days"]
+    },
+    {
+      "name": "loanTerm",
+      "type": "numeric",
+      "value": {
+        "min": 1,
+        "max": 30,
+        "step": 1
+      }
+    },
+    {
+      "name": "age",
+      "type": "numeric",
+      "value": {
+        "min": 18,
+        "max": 100,
+        "step": 1
+      }
+    },
+    {
+     "name": "residentialStatus",
+      "type": "list",
+      "value":["homeowner with mortgage","homeowner without mortgage","living with parents","private tenant","council tenant"]
+    },
+    {
+      "name": "cityOrTown",
+      "type": "list",
+      "value": ["London", "Liverpool", "Manchester", "Leeds"]
+    },
+    {
+      "name":"country",
+      "type": "list",
+      "value": ["UK"]
+    },
+    {
+      "name":"maritalStatus",
+      "type": "list",
+      "value":["single", "married", "cohabiting","civil partnership"]
+    },
+    {
+      "name":"employmentStatus",
+      "type": "list",
+      "value":["employed", "self-employed","retired","student","unemployed"]
+    },
+    {
+      "name":"income",
+      "type": "numeric",
+      "value": {
+        "min": 0,
+        "max": 250000,
+        "step": 10000
+      }
+    },
+    {
+      "name":"incomePeriod",
+      "type": "list",
+      "value":["yearly","monthly"]
+    },
+    {
+      "name":"disposableIncome",
+      "type": "numeric",
+      "value": {
+        "min": 0,
+        "max": 250000,
+        "step": 10000
+      }
+    },
+    {
+      "name":"disposableIncomePeriod",
+      "type": "list",
+      "value":["yearly","monthly"]
+    },
+    {
+      "name":"creditScore",
+      "type": "numeric",
+      "value": {
+        "min": 500,
+        "max": 999,
+        "step": 10
+      }
+    },
+    {
+      "name":"creditScoreProvider",
+      "type": "list",
+      "value":["experian","callcredit","equifax"]
+    },
+    {
+      "name":"creditScoreDate",
+      "type": "numeric",
+      "value": {
+        "min": 0,
+        "max": 60,
+        "step": 1
+      }
+    }
+  ]
+}
