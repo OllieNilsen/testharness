@@ -44,20 +44,21 @@ class Generators {
   /**
    * Generator for array iterator, taking an array parameter.
    *
-   * @param l (array)
+   * @param arrayValue (array)
    * @returns x (array member)
    */
-  * list(l) {
-    const s = l.slice(); //clone the array
-    while (s.length > 1) {
-      yield s.shift(); // yield all but the last value
+  * list(arrayValue) {
+    const clonedValue = arrayValue.slice(); //clone the array
+    while (clonedValue.length > 1) {
+      yield clonedValue.shift(); // yield all but the last value
     }
-    return s[0]; // return last value to set iterator to `done`
+    return clonedValue[0]; // return last value to set iterator to `done`
   }
 
   /**
    * Generator for boolean iterator. Yields `true`, then `false`.
    * @returns {boolean}.z§
+   *
    */
   * boolean() {
     yield true;
