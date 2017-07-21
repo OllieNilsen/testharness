@@ -1,133 +1,157 @@
 'use strict';
-let vorpal = require('vorpal')();
-const rfqEngine = require('./rfqEngine');
-const requireDir = require('require-dir');
-const configs = requireDir('../config/rfqProperties');
-const R = require('ramda');
-vorpal
-  .command('gen', 'Recursively generates RFQs and Quotes')
-  .action((args, cb) => {
-    return rfqEngine.rfqs.execute(R.values(configs))
-      .then(() => cb())
-      .catch(console.log);
-  });
 
-vorpal
-  .command('' +
-    'Quotes', 'sends intermittent Quotes for random RFQs')
-  .action((args, cb) => rfqEngine.quotes.execute(3000)
-    .then());
 process.env.minimumLogLevel = 'fatal';
 const main = require('./main');
 const vorpal = require('vorpal')();
 
-let clientId;
-let clientToken;
-let providerId;
-let providerToken;
 let lastRFQ = { rfqId: null };
 let lastQuote = { rfqId: null, quoteId: null };
 
+const requireDir = require('require-dir');
+const configs = requireDir('./config/rfqProperties');
+const R = require('ramda');
+
+main.state.loadFromStorage();
+
 vorpal
-  .command('createClient', 'creates a client')
+  .command('loadStoredState', 'Loads state from storage')
   .action((args, cb) => {
+    return main.state.loadFromStorage()
+      .then(console.log)
+      .then(() => cb('State loaded successfully'))
+      .catch(err => {
+        console.log(err);
+        cb('Error loading state.');
+      })
+  });
+
+/************ client *************/
+vorpal
+  .command('gen', 'Recursively generates RFQs and Quotes')
+  .action((args, cb) => {
+    return main.rfqGenerator.rfqs.execute(R.values(configs))
+      .then(() => cb())
+      .catch(console.log);
+  });
+
+
+vorpal
+  .command('client', 'logs out the current client')
+  .option('-a --all', 'get all clients in storage')
+  .action(((args, cb) => {
+    if(args.options.all) return cb(main.state.resources.clients);
+    return cb(main.state.client);
+  }));
+
+vorpal
+  .command('client rotate', 'rotates the current client')
+  .action((args, cb) => {
+    main.state.rotateResource('client');
+    cb(main.state.client);
+  });
+
+vorpal
+  .command('client create', 'creates a client')
+  .option('-t --token', 'issue token for the created client')
+  .action((args, cb) => {
+  const issueToken = args.options.token ?
+    client => main.clients.issueAuthToken(client.clientId).then(main.utils.logResponse) :
+    () => Promise.resolve();
+
     return main.clients.createNewClient()
-      .then(response => {
-        clientId = response.response.clientId;
-        console.log('************* REQUEST *************');
-        console.log(JSON.stringify(response.request, null, 4));
-        console.log('************* RESPONSE *************');
-        console.log(JSON.stringify(response.response, null, 4));
-        cb()
-      })
-      .catch(error => cb('Error Creating Client'));
+      .then(main.utils.logResponse)
+      .then(() => issueToken(main.state.client))
+      .then(() => cb())
+      .catch(error => cb(error));
   });
 
 vorpal
-  .command('issueClientToken', 'creates a auth token for the client')
+  .command('client issue token', 'creates a auth token for the client')
   .action((args, cb) => {
-    return main.clients.issueAuthToken(clientId)
+    return main.clients.issueAuthToken()
+      .then(main.utils.logResponse)
+      .then(() => cb())
+      .catch(cb);
+  });
+
+
+vorpal
+  .command('client createRFQ', 'creates an RFQ')
+  .action((args, cb) => {
+    return main.clients.createNewRFQ(clientToken)
+      .then(main.utils.logResponse)
       .then(response => {
-        clientToken = response.response.token;
-        console.log('************* REQUEST *************');
-        console.log(JSON.stringify(response.request, null, 4));
-        console.log('************* RESPONSE *************');
-        console.log(JSON.stringify(response.response, null, 4));
+        lastRFQ.rfqId = response.response.rfqId;
         cb()
       })
-      .catch(error => cb('Error Issuing Token'));
+      .catch(error => cb('Error Creating RFQ'));
+  });
+
+
+/************ provider *************/
+vorpal
+  .command('provider', 'logs out the current provider')
+  .option('-a --all', 'get all providers in storage')
+  .action(((args, cb) => {
+    if(args.options.all) return cb(main.state.resources.providers);
+    return cb(main.state.provider);
+  }));
+
+vorpal
+  .command('provider rotate', 'rotates the current provider')
+  .action((args, cb) => {
+    main.state.rotateResource('provider');
+    cb(main.state.provider);
   });
 
 vorpal
-  .command('createProvider', 'creates a provider')
+  .command('provider create', 'creates a provider')
+  .option('-t --token', 'issues token for the provider')
   .action((args, cb) => {
+    const issueToken = args.options.token ?
+      () => main.providers.issueAuthToken().then(main.utils.logResponse) :
+      () => Promise.resolve();
+
     return main.providers.createNewProvider()
       .then(response => {
-        providerId = response.response.providerId;
         response.response.marketElements = {
           "exchange": "SRV",
           "market": "PETS",
           "section": "UK",
           "instrumentClass": "DOG",
           "instrument": "WLK"
-        };
-        console.log('************* REQUEST *************');
-        console.log(JSON.stringify(response.request, null, 4));
-        console.log('************* RESPONSE *************');
-        console.log(JSON.stringify(response.response, null, 4));
-        cb()
+        }
+        return response;
       })
+      .then(main.utils.logResponse)
+      .then(issueToken)
+      .then(() => cb())
       .catch(error => cb('Error Creating Provider'));
   });
 
 vorpal
-  .command('issueProviderToken', 'creates a auth token for the provider')
+  .command('provider issue token', 'creates a auth token for the provider')
   .action((args, cb) => {
-    return main.providers.issueAuthToken(providerId)
-      .then(response => {
-        providerToken = response.response.token;
-        console.log('************* REQUEST *************');
-        console.log(JSON.stringify(response.request, null, 4));
-        console.log('************* RESPONSE *************');
-        console.log(JSON.stringify(response.response, null, 4));
-        cb()
-      })
-      .catch(error => cb('Error Issuing Token'));
+    return main.providers.issueAuthToken()
+      .then(main.utils.logResponse)
+      .then(() => cb())
+      .catch(error => cb(error));
   });
 
 vorpal
-  .command('createRFQ', 'creates an RFQ')
-  .action((args, cb) => {
-    return main.clients.createNewRFQ(clientToken)
-      .then(response => {
-        lastRFQ.rfqId = response.response.rfqId;
-        console.log('************* REQUEST *************');
-        console.log(JSON.stringify(response.request, null, 4));
-        console.log('************* RESPONSE *************');
-        console.log(JSON.stringify(response.response, null, 4));
-        cb()
-      })
-      .catch(error => cb('Error Creating RFQ'));
-  });
-
-vorpal
-  .command('getRFQ', 'gets an RFQ')
+  .command('provider getRFQ', 'gets an RFQ')
   .action((args, cb) => {
     return main.clients.getRFQ(clientToken, lastRFQ.rfqId)
-      .then(response => {
-        console.log('************* REQUEST *************');
-        console.log(JSON.stringify({}, null, 4));
-        console.log('************* RESPONSE *************');
-        console.log(JSON.stringify(response, null, 4));
-        cb();
-      })
+      .then(main.utils.logResponse)
+      .then(() => cb())
       .catch(error => cb('Error Creating RFQ'));
   });
 
 vorpal
-  .command('getProviderMessages', 'queries for posted data')
+  .command('provider getMessages', 'queries for posted data')
   .action((args, cb) => {
     return main.providers.getPostedData()
+      .then(i)
       .then(response => {
         console.log('************* REQUEST *************');
         console.log(JSON.stringify({}, null, 4));
@@ -139,16 +163,13 @@ vorpal
   });
 
 vorpal
-  .command('createQuote', 'creates a quote')
+  .command('provider createQuote', 'creates a quote')
   .action((args, cb) => {
     return main.providers.createQuote(lastRFQ.rfqId, providerToken)
+      .then(main.utils.logResponse)
       .then(response => {
         lastQuote.rfqId = lastRFQ.rfqId;
         lastQuote.quoteId = response.response.quoteId;
-        console.log('************* REQUEST *************');
-        console.log(JSON.stringify(response.request, null, 4));
-        console.log('************* RESPONSE *************');
-        console.log(JSON.stringify(response.response, null, 4));
         cb();
       })
       .catch(error => cb('Error Creating Quote'));
@@ -159,13 +180,8 @@ vorpal
   .command('getClientMessages', 'queries for posted data')
   .action((args, cb) => {
     return main.clients.getPostedData()
-      .then(response => {
-        console.log('************* REQUEST *************');
-        console.log(JSON.stringify({}, null, 4));
-        console.log('************* RESPONSE *************');
-        console.log(JSON.stringify(response, null, 4));
-        cb();
-      })
+      .then(main.utils.logResponse)
+      .then(() => cb())
       .catch(error => cb('No Quotes Received'));
   });
 
@@ -173,13 +189,8 @@ vorpal
   .command('acceptQuote', 'accept quotes')
   .action((args, cb) => {
     return main.clients.acceptQuote(clientToken, lastQuote.rfqId, lastQuote.quoteId)
-      .then((response) => {
-        console.log('************* REQUEST *************');
-        console.log(JSON.stringify(response.request, null, 4));
-        console.log('************* RESPONSE *************');
-        console.log(JSON.stringify({}, null, 4));
-        cb();
-      })
+      .then(main.utils.logResponse)
+      .then(() => cb())
       .catch(error => cb(error));
   });
 
@@ -187,13 +198,8 @@ vorpal
   .command('rejectQuote', 'accept quotes')
   .action((args, cb) => {
     return main.clients.rejectQuote(clientToken, lastQuote.rfqId, lastQuote.quoteId)
-      .then((response) => {
-        console.log('************* REQUEST *************');
-        console.log(JSON.stringify(response.request, null, 4));
-        console.log('************* RESPONSE *************');
-        console.log(JSON.stringify({}, null, 4));
-        cb();
-      })
+      .then(main.utils.logResponse)
+      .then(() => cb())
       .catch(error => cb(error));
   });
 
@@ -201,13 +207,8 @@ vorpal
   .command('getQuotes', 'get Quotes')
   .action((args, cb) => {
     return main.clients.getQuotes(clientToken, lastQuote.rfqId)
-      .then(response => {
-        console.log('************* REQUEST *************');
-        console.log(JSON.stringify({}, null, 4));
-        console.log('************* RESPONSE *************');
-        console.log(JSON.stringify(response, null, 4));
-        cb();
-      })
+      .then(main.utils.logResponse)
+      .then(() => cb())
       .catch(error => cb('No Quotes received'));
   });
 
@@ -215,15 +216,14 @@ vorpal
   .command('deleteData', 'deletes client and provider as well as tokens')
   .action((args, cb) => {
     return Promise.all([
-      main.clients.deleteClient(clientId, clientToken),
-      main.clients.deleteQuote(),
-      main.providers.deleteProvider(providerId, providerToken),
-      main.providers.deleteRFQ()
+      main.clients.deleteClients(),
+      // main.clients.deleteQuote(),
+      main.providers.deleteProviders(),
+      // main.providers.deleteRFQ()
     ])
       .then(response => cb('Delete Successful'))
-      .catch(error => cb('Error Deleting'));
+      .catch(error => cb(error));
   });
-
 
 vorpal
   .delimiter('spokeHub>> ')
