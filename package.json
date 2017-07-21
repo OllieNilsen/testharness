@@ -4,17 +4,26 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "node ./src/cli.js",
+    "start": "node ./cli.js",
     "test": "./node_modules/.bin/mocha --reporter spec ./test "
   },
   "author": "",
   "license": "UNLICENCED",
   "dependencies": {
+    "@spokedev/np_aws_utils": "0.0.1",
     "bluebird": "^3.5.0",
+    "faker": "^4.1.0",
     "rambda": "^0.5.6",
     "ramda": "^0.23.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
+    "require-dir": "^0.3.2",
     "vorpal": "^1.12.0"
+  },
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "rewire": "^2.5.2",
+    "sinon": "^2.3.4",
+    "sinon-chai": "^2.11.0"
   }
 }

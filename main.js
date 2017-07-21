@@ -1,3 +1,2 @@
-/**
- * Created by ollie on 17/07/2017.
- */
+process.env.AWS_XRAY_CONTEXT_MISSING='LOG_ERROR';
+module.exports = require('require-dir')('./src');

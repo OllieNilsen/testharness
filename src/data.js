@@ -1,15 +1,9 @@
-const config = require('./../config.json');
+const infraConfig = require('../config/infrastructure.json');
+const faker = require('faker');
 
-let clientCount = 0;
-let providerCount = 0;
-
-const clients = [null, "KennelsRUS", "HomeAndDog", "DogsRUS"];
-const providers = [null, "DogWalkingKings", "MoreDogWalkers", "CatWalkers"];
-
-function newClient() {
-  clientCount++;
+function client() {
   return {
-    "name": clients[clientCount],
+    "name": faker.name.findName().toLowerCase().split(' ').join('_'),
     "marketElements": {
       "exchange": "SRV",
       "market": "PETS",
@@ -17,14 +11,13 @@ function newClient() {
       "instrumentClass": "DOG",
       "instrument": "WLK"
     },
-    "clientUrl": config.client
+    "clientUrl": infraConfig.client
   }
 }
 
-function newProvider() {
-  providerCount++;
+function provider() {
   return {
-    "name": providers[providerCount],
+    "name": faker.name.findName().toLowerCase().split(' ').join('_'),
     "marketElements": {
       "exchange": "SRV",
       "market": "PETS",
@@ -32,7 +25,7 @@ function newProvider() {
       "instrumentClass": "DOG",
       "instrument": "WLK"
     },
-    "providerUrl": config.provider
+    "providerUrl": infraConfig.provider
   }
 }
 
@@ -73,8 +66,8 @@ function newQuote() {
 }
 
 module.exports = {
-  newClient,
-  newProvider,
+  client,
+  provider,
   newRFQ,
   newQuote
 };

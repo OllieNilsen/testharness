@@ -1,4 +1,5 @@
 const R = require('ramda');
+const sourceCountArray = [];
 
 /**
  * The Sources class stores the sources for the generators, so that each generator can
@@ -10,14 +11,18 @@ const R = require('ramda');
 class Sources {
   list(name, value) {
     this[name] = { type: 'list', value };
+    sourceCountArray.push(value.length || 1)
   }
 
   numeric(name, v) {
     this[name] = { type: 'numeric', value: { min: v.min, max: v.max, step: v.step } };
+    sourceCountArray.push(Math.floor((v.max - v.min)/v.step || 1));
   }
 
   boolean(name) {
     this[name] = { type: 'boolean' };
+    sourceCountArray.push(2);
+
   }
 }
 
@@ -144,5 +149,6 @@ function *lazyCartesian(sources) {
 module.exports = {
   Sources,
   takeNext,
-  lazyCartesian
+  lazyCartesian,
+  sourceCountArray
 };

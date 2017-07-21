@@ -11,20 +11,6 @@ const requireDir = require('require-dir');
 const configs = requireDir('./config/rfqProperties');
 const R = require('ramda');
 
-main.state.loadFromStorage();
-
-vorpal
-  .command('loadStoredState', 'Loads state from storage')
-  .action((args, cb) => {
-    return main.state.loadFromStorage()
-      .then(console.log)
-      .then(() => cb('State loaded successfully'))
-      .catch(err => {
-        console.log(err);
-        cb('Error loading state.');
-      })
-  });
-
 /************ client *************/
 vorpal
   .command('gen', 'Recursively generates RFQs and Quotes')
@@ -37,36 +23,40 @@ vorpal
 
 vorpal
   .command('client', 'logs out the current client')
+  .alias('c')
   .option('-a --all', 'get all clients in storage')
   .action(((args, cb) => {
-    if(args.options.all) return cb(main.state.resources.clients);
-    return cb(main.state.client);
+    if (args.options.all) return cb(main.storage.state.clients);
+    return cb(main.clients.current);
   }));
 
 vorpal
   .command('client rotate', 'rotates the current client')
+  .alias('cr')
   .action((args, cb) => {
-    main.state.rotateResource('client');
-    cb(main.state.client);
+    main.clients.rotateCurrent();
+    cb(main.clients.current);
   });
 
 vorpal
   .command('client create', 'creates a client')
+  .alias('cc')
   .option('-t --token', 'issue token for the created client')
   .action((args, cb) => {
-  const issueToken = args.options.token ?
-    client => main.clients.issueAuthToken(client.clientId).then(main.utils.logResponse) :
-    () => Promise.resolve();
+    const issueToken = args.options.token ?
+      client => main.clients.issueAuthToken(client.clientId).then(main.utils.logResponse) :
+      () => Promise.resolve();
 
-    return main.clients.createNewClient()
+    return main.clients.create()
       .then(main.utils.logResponse)
-      .then(() => issueToken(main.state.client))
+      .then(() => issueToken(main.clients.current))
       .then(() => cb())
       .catch(error => cb(error));
   });
 
 vorpal
   .command('client issue token', 'creates a auth token for the client')
+  .alias('ct')
   .action((args, cb) => {
     return main.clients.issueAuthToken()
       .then(main.utils.logResponse)
@@ -91,38 +81,31 @@ vorpal
 /************ provider *************/
 vorpal
   .command('provider', 'logs out the current provider')
+  .alias('p')
   .option('-a --all', 'get all providers in storage')
   .action(((args, cb) => {
-    if(args.options.all) return cb(main.state.resources.providers);
-    return cb(main.state.provider);
+    if (args.options.all) return cb(main.storage.state.providers);
+    return cb(main.providers.current);
   }));
 
 vorpal
   .command('provider rotate', 'rotates the current provider')
+  .alias('pr')
   .action((args, cb) => {
-    main.state.rotateResource('provider');
-    cb(main.state.provider);
+    main.providers.rotateCurrent();
+    cb(main.providers.current);
   });
 
 vorpal
   .command('provider create', 'creates a provider')
+  .alias('pc')
   .option('-t --token', 'issues token for the provider')
   .action((args, cb) => {
     const issueToken = args.options.token ?
       () => main.providers.issueAuthToken().then(main.utils.logResponse) :
       () => Promise.resolve();
 
-    return main.providers.createNewProvider()
-      .then(response => {
-        response.response.marketElements = {
-          "exchange": "SRV",
-          "market": "PETS",
-          "section": "UK",
-          "instrumentClass": "DOG",
-          "instrument": "WLK"
-        }
-        return response;
-      })
+    return main.providers.create()
       .then(main.utils.logResponse)
       .then(issueToken)
       .then(() => cb())
@@ -131,6 +114,7 @@ vorpal
 
 vorpal
   .command('provider issue token', 'creates a auth token for the provider')
+  .alias('pt')
   .action((args, cb) => {
     return main.providers.issueAuthToken()
       .then(main.utils.logResponse)
@@ -216,9 +200,9 @@ vorpal
   .command('deleteData', 'deletes client and provider as well as tokens')
   .action((args, cb) => {
     return Promise.all([
-      main.clients.deleteClients(),
+      main.clients.deleteAll(),
       // main.clients.deleteQuote(),
-      main.providers.deleteProviders(),
+      main.providers.deleteAll()
       // main.providers.deleteRFQ()
     ])
       .then(response => cb('Delete Successful'))

@@ -18,9 +18,7 @@ describe('index', () => {
       sources.numeric('age', { min: 24, max: 25, step: 1 });
       cartesian = sut.lazyCartesian(sources);
     });
-    // afterEach(() => {
-    //   cartesian = undefined;
-    // })
+
     it('should yield all possible combinations of the sources', () => {
 
       sut.takeNext(8, cartesian).should.eql([
