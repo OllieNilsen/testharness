@@ -24,7 +24,9 @@ class Consumer {
   }
 
   rotateCurrent() {
-    if(!this.current || !storage.state[this.ctP]) return console.log(`There are no ${this.ctPl} to rotate!`)
+    console.log('current', this.current)
+    console.log('current', this.current)
+    if(!this.current || !storage.state[this.ctPl]) return console.log(`There are no ${this.ctPl} to rotate!`)
     const keys = R.keys(storage.state[this.ctPl]);
     const i = (keys.indexOf(this.current[this.ctKey]) + 1) % keys.length;
     this.current = storage.state[this.ctPl][keys[i]]
