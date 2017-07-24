@@ -76,14 +76,14 @@ class Consumer {
 
   deleteAll(){
     if(!storage.state[this.ctPl] || !R.keys(storage.state[this.ctPl]).length) return Promise.resolve();
-    return Promise.props(R.map(this.delete.bind(thisgit), storage.state[this.ctPl]))
+    return Promise.props(R.map(this.delete.bind(this), storage.state[this.ctPl]))
       .then(() => this.current = undefined)
   }
 
   issueAuthToken() {
 
     if (!this.current) return Promise.reject(`There\'s no ${this.ct} to issue a token for! Try running "${this.ct} create" to create one.`);
-    if (this.current.token) return Promise.reject(`Current ${this.ct} already has token.`);
+    if (this.current.token) return Promise.reject(`Current ${thisaa.ct} already has token.`);
 
     const uid = this.current[this.ctKey];
     const authLambdaKey = `${this.ct}AuthFunctionName`
