@@ -25,7 +25,7 @@ class Consumer {
   }
 
   rotateCurrent() {
-    if (!this.current || !storage.state[this.ctP]) return console.log(`There are no ${this.ctPl} to rotate!`)
+    if (!this.current || !storage.state[this.ctPl]) return console.log(`There are no ${this.ctPl} to rotate!`)
     const keys = R.keys(storage.state[this.ctPl]);
     const i = (keys.indexOf(this.current.consumerId) + 1) % keys.length;
     this.current = storage.state[this.ctPl][keys[i]]
@@ -42,10 +42,6 @@ class Consumer {
       body: consumer
     })
       .then(R.set(R.lensProp('consumerId'), consumerId))
-      .then((c) => {
-        console.log(c)
-        return c;
-      })
       .then(data => Promise.all([
         storage.putItem(`${this.ctPl}/${consumerId}`, data),
         Promise.resolve(this.current = data),

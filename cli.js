@@ -210,5 +210,5 @@ vorpal
   });
 
 vorpal
-  .delimiter('spokeHub>> ')
+  .delimiter('Poke >> ')
   .show();

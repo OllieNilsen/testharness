@@ -1,150 +1,31 @@
 [
   {
-    "name": "loanAmount",
-    "type": "numeric",
-    "value": {
-      "min": 5000,
-      "max": 100000,
-      "step": 5000
-    }
-  },
-  {
-    "name": "loanCurrency",
+    "name": "postcode",
     "type": "list",
-    "value": [
-      "EUR"
-    ]
+    "value": ["EC1Y 2AL", "E1 7HQ", "KT10 8LG", "GL6 9BZ"]
   },
   {
-    "name": "termPeriod",
+    "name": "dogBreed",
     "type": "list",
-    "value": [
-      "years"
-    ]
+    "value": ["Labradoodle", "GoldenRetriever", "Shitzu", "Pug"]
   },
   {
-    "name": "loanTerm",
+    "name": "walkDays",
+    "type": "list",
+    "value": [["MON", "THURS"], ["SAT"], ["MON", "WED"], ["FRI", "MON"]]
+  },
+  {
+    "name": "walkTime",
+    "type": "list",
+    "value": ["AM", "PM"]
+  },
+  {
+    "name": "walkLength",
     "type": "numeric",
     "value": {
       "min": 1,
-      "max": 3,
-      "step": 1
-    }
-  },
-  {
-    "name": "age",
-    "type": "numeric",
-    "value": {
-      "min": 19,
-      "max": 29,
+      "max": 20,
       "step": 2
-    }
-  },
-  {
-    "name": "residentialStatus",
-    "type": "list",
-    "value": [
-      "homeowner with mortgage",
-      "homeowner without mortgage",
-      "living with parents",
-      "private tenant",
-      "council tenant"
-    ]
-  },
-  {
-    "name": "cityOrTown",
-    "type": "list",
-    "value": [
-      "London",
-      "Leeds"
-    ]
-  },
-  {
-    "name": "country",
-    "type": "list",
-    "value": [
-      "UK"
-    ]
-  },
-  {
-    "name": "maritalStatus",
-    "type": "list",
-    "value": [
-      "single",
-      "married",
-      "cohabiting",
-      "civil partnership"
-    ]
-  },
-  {
-    "name": "employmentStatus",
-    "type": "list",
-    "value": [
-      "employed",
-      "self-employed",
-      "retired",
-      "student",
-      "unemployed"
-    ]
-  },
-  {
-    "name": "income",
-    "type": "numeric",
-    "value": {
-      "min": 0,
-      "max": 250000,
-      "step": 20000
-    }
-  },
-  {
-    "name": "incomePeriod",
-    "type": "list",
-    "value": [
-      "yearly"
-
-    ]
-  },
-  {
-    "name": "disposableIncome",
-    "type": "numeric",
-    "value": {
-      "min": 0,
-      "max": 250000,
-      "step": 20000
-    }
-  },
-  {
-    "name": "disposableIncomePeriod",
-    "type": "list",
-    "value": [
-      "yearly",
-      "monthly"
-    ]
-  },
-  {
-    "name": "creditScore",
-    "type": "numeric",
-    "value": {
-      "min": 499,
-      "max": 999,
-      "step": 100
-    }
-  },
-  {
-    "name": "creditScoreProvider",
-    "type": "list",
-    "value": [
-      "experian"
-
-    ]
-  },
-  {
-    "name": "creditScoreDate",
-    "type": "numeric",
-    "value": {
-      "min": 1483273000,
-      "max": 1483273000,
-      "step": 1000
     }
   }
 ]

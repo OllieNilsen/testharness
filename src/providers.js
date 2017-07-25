@@ -61,10 +61,8 @@ class Provider extends Consumer {
   getMessagesRecursive() {
     const i = R.keys(storage.state.providers).length;
     const baseArray = new Array(i);
-    console.log("baseArray", baseArray);
     return Promise.map(baseArray, () => {
       this.rotateCurrent();
-      console.log('current', this.current)
       return this.getMessages()
         .then(u.logResponse)
     })

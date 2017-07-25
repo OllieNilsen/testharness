@@ -1,8 +1,10 @@
 const cartesian = require('./cartesian');
 const rp = require('request-promise');
 const throttleConfig = require('../config/throttle');
-const tokenConfig = require('../config/infrastructure')
-;const storage = require('./storage');
+const tokenConfig = require('../config/infrastructure');
+const infra = require('../config/infrastructure.json');
+const storage = require('./storage');
+const clients = require('./clients');
 const Promise = require('bluebird');
 const state = require('./state');
 const R = require('ramda');
@@ -27,7 +29,7 @@ function respondToRandom() {
   const options = {
     method: "POST",
     headers: { "x-spoke-provider": token },
-    uri: "https://l9utkxtc71.execute-api.eu-west-1.amazonaws.com/dev/rfqs/" + getRfqIdToQuote() + "/quotes",
+    uri: `${infra.spokeHub}/${getRfqIdToQuote()}/quotes`,
     body: {
       quotePayload: {
         providerName: "AutoResponderCLI",
@@ -50,7 +52,7 @@ function respondToRandom() {
 
 
   return rp(options)
-    .then(x => {
+    .then(() => {
       state.increment('totalQuotes')
     })
     .catch(console.log);
@@ -71,30 +73,20 @@ function createRfq(payload) {
   return {
     lit: false,
     requestGroup: [],
-    payload,
-    marketElements: {
-      exchange: "FSI",
-      instrument: "UL",
-      instrumentClass: "ULP",
-      market: "LM",
-      section: "UK"
-    }
+    payload
   };
 }
 
 function makeRfqRequest(rfq) {
-  const token = tokenConfig.clients[u.randonNumberBetween(0, tokenConfig.clients.length -1)]
   const options = {
     method: "POST",
-    headers: { "x-spoke-client": token },
-    uri: "https://l9utkxtc71.execute-api.eu-west-1.amazonaws.com/dev/rfqs",
+    headers: { "x-spoke-client": clients.current.token },
+    uri: `${infra.spokeHub}/rfqs`,
     body: rfq,
     json: true
   }
   return rp(options)
-    .then(storage.saveRandomRfq)
-    .then(respondToRandom)
-    .then(() => state.render())
+    .then(console.log)
     .catch(console.log)
 }
 
@@ -110,6 +102,8 @@ function throttleRfqs(delay, numberOfRfqs, rfqSet, token) {
   R.map(() => state.increment('totalRfqs'), Array(currentSet.length).fill(0));
 
   return Promise.map(currentSet, rfqBody => makeRfqRequest(createRfq(rfqBody), token))
+
+.then(() => state.render())
     .then(() => pauseFor(delay))
     .then(() => {
       if (currentSet.length) {
@@ -124,8 +118,9 @@ function executeRfqConfigs(configs, token) {
   return Promise.map(configs, config => {
     const sources = new cartesian.Sources();
     config.forEach(p => sources[p.type](p.name, p.value));
-    state.totalRfqsToGenerate = cartesian.sourceCountArray.reduce((a,b) => a*b, 1);
     const rfqSet = cartesian.lazyCartesian(sources);
+
+    state.totalRfqsToGenerate = cartesian.sourceCountArray.reduce((a,b) => a*b, 1);
     return throttleRfqs(throttleConfig.delay, throttleConfig.batchSize, rfqSet, token)
   });
 }
