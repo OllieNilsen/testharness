@@ -54,6 +54,7 @@ vorpal
       .catch(error => cb(error));
   });
 
+
 vorpal
   .command('client issue token', 'creates a auth token for the client')
   .alias('ct')
@@ -114,6 +115,12 @@ vorpal
       .catch(error => cb('Error Creating Provider'));
   });
 
+vorpal
+  .command('provider create with policy', 'creates multiple providers with quoting policies')
+  .alias('pcp')
+  .action((args, cb) => {
+    return main.providers.createWithPolicy();
+  })
 vorpal
   .command('provider issue token', 'creates a auth token for the provider')
   .alias('pt')

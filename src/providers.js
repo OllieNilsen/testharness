@@ -6,6 +6,8 @@ const R = require('ramda');
 const u = require('./utils');
 const storage = require('./storage');
 const Promise = require('bluebird');
+const cartesian = require('./cartesian');
+const policies = require('../config/quotePolicies.json');
 
 function saveMessage(m) {
   const tableName = m.rfqId ? 'rfq' : 'quote';
@@ -56,6 +58,23 @@ class Provider extends Consumer {
           .then(response => ({ request: {}, response }))
       ]))
       .then(r => r[1]);
+  }
+
+  calculateQuoteDelay() {
+    const max = this.current.minDelay + this.current.maxDelay;
+    return Math.floor((Math.random() * max) + this.current.minDelay)
+  }
+
+  createWithPolicy() {
+
+    const sources = new cartesian.Sources();
+    policies.forEach(p => sources[p.type](p.name, p.value));
+    const totalProvidersToGenerate = cartesian.sourceCountArray.reduce((a, b) => a * b, 1);
+    console.log(` - generating ${totalProvidersToGenerate} providers...`)
+    return Promise.map(cartesian.takeNext(totalProvidersToGenerate, cartesian.lazyCartesian(sources)), policy => {
+      return super.create()
+        .then(() => storage.putItem(`providers/${this.current.consumerId}`, R.merge(this.current, policy)))
+    });
   }
 
   getMessagesRecursive() {

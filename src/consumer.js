@@ -48,7 +48,7 @@ class Consumer {
         Promise.resolve(data)
       ]))
       .then(r => r[2])
-      .then(response => ({ request: consumer, response }));
+      .then(response => ({ request: consumer, response }));consumerId
   }
 
   delete(consumer) {

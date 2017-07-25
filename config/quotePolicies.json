@@ -1,0 +1,25 @@
+[
+{
+    "name": "minDelay",
+    "type": "numeric",
+    "value": {
+        "min": 600000,
+        "max": 86400000,
+        "step": 39850418
+    }
+},
+{
+    "name": "maxDelay",
+    "type": "numeric",
+    "value": {
+        "min": 600000,
+        "max": 100000000,
+        "step": 30000000
+    }
+},
+{
+    "name": "cost",
+    "type": "list",
+    "value": [22,12,35]
+}
+]

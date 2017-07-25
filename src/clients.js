@@ -10,6 +10,7 @@ class Client extends Consumer {
   }
 
   createNewRFQ() {
+    if(!this.current) return Promise.reject('You don\'t have a client! Try running `create client`');
     const rfq = data.newRFQ();
     return request({
       uri: `${config.spokeHub}/rfqs`,
