@@ -76,7 +76,7 @@ vorpal
         cb()
       })
       .catch(cb)
-      // .catch(error => cb('Error Creating RFQ'));
+    // .catch(error => cb('Error Creating RFQ'));
   });
 
 
@@ -136,8 +136,10 @@ vorpal
 vorpal
   .command('provider getMessages', 'queries for posted data')
   .alias('pgm')
+  .option('-r --recursive', 'checks for messages every 5 seconds.')
   .action((args, cb) => {
-    return main.providers.getPostedData()
+    if (args.options.recursive) return main.providers.getMessagesRecursive();
+    return main.providers.getMessages()
       .then(main.utils.logResponse)
       .then(() => cb())
       .catch(cb);  // .catch(() => cb('Error getting data.'));
@@ -161,7 +163,7 @@ vorpal
 vorpal
   .command('getClientMessages', 'queries for posted data')
   .action((args, cb) => {
-    return main.clients.getPostedData()
+    return main.clients.getMessages()
       .then(main.utils.logResponse)
       .then(() => cb())
       .catch(error => cb('No Quotes Received'));

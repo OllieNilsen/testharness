@@ -9,13 +9,13 @@ class Client extends Consumer {
     super('client');
   }
 
-  createNewRFQ(token) {
+  createNewRFQ() {
     const rfq = data.newRFQ();
     return request({
       uri: `${config.spokeHub}/rfqs`,
       method: 'POST',
       json: true,
-      headers: { 'x-spoke-client': token },
+      headers: { 'x-spoke-client': this.current.token },
       body: rfq
     }).then(response => ({ request: rfq, response }));
   }
@@ -29,7 +29,7 @@ class Client extends Consumer {
     })
   }
 
-  getPostedData() {
+  getMessages() {
     return request({
       uri: `${config.client}`,
       method: 'GET',
@@ -37,6 +37,8 @@ class Client extends Consumer {
     })
       .then(response => response.items.map(item => item.body));
   }
+
+
 
   acceptQuote(token, rfqId, quoteId) {
     return request({

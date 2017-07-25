@@ -1,5 +1,5 @@
 {
-  "spokeHub": "https://l9utkxtc71.execute-api.eu-west-1.amazonaws.com/dev",
+  "spokeHub": "https://a4isdfvm41.execute-api.eu-west-1.amazonaws.com/dev",
   "providerAuthFunctionName": "arn:aws:lambda:eu-west-1:355555488900:function:RFQ_DEV_provider_authentication_lambda_create",
   "clientAuthFunctionName": "arn:aws:lambda:eu-west-1:355555488900:function:RFQ_DEV_client_authentication_lambda_create",
   "clientAuthDeleteFunctionName": "arn:aws:lambda:eu-west-1:355555488900:function:RFQ_DEV_client_authentication_lambda_delete",

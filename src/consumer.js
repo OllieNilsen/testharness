@@ -24,11 +24,9 @@ class Consumer {
   }
 
   rotateCurrent() {
-    console.log('current', this.current)
-    console.log('current', this.current)
     if(!this.current || !storage.state[this.ctPl]) return console.log(`There are no ${this.ctPl} to rotate!`)
     const keys = R.keys(storage.state[this.ctPl]);
-    const i = (keys.indexOf(this.current[this.ctKey]) + 1) % keys.length;
+    const i = (keys.indexOf(this.current.consumerId) + 1) % keys.length;
     this.current = storage.state[this.ctPl][keys[i]]
   }
 
@@ -72,6 +70,8 @@ class Consumer {
     promiseArray.push(storage.deleteItem(`${this.ctPl}/${consumer[this.ctKey]}`));
     return Promise.all(promiseArray);
   }
+
+
 
 
   deleteAll(){

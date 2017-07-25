@@ -58,7 +58,9 @@ class Storage {
   addItemToState(pathToItem) {
     const strippedPath = _strip(pathToItem);
     const lens = R.lensPath(strippedPath.split(sep));
-    this.state = R.set(lens, JSON.parse(fs.readFileSync(pathToItem).toString('utf8')), this.state);
+    const item = JSON.parse(fs.readFileSync(pathToItem).toString('utf8'));
+    this.state = R.set(lens, item, this.state);
+    return item;
   }
 
   removeItemFromState(pathToItem) {

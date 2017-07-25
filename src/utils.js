@@ -1,15 +1,17 @@
 const Promise = require('bluebird');
 const R = require('ramda');
-const t = (message, x) => {
-  console.log(message, x);
-  return x;
+const t = (f, x) => {
+  return f(x)
+    .then(() => x)
 }
 class U {
-
   constructor() {
     this.tap = R.curry(t);
   }
 
+  wait(delay = 1000){
+     return new Promise(resolve => setTimeout(resolve, delay));
+  }
   randomNumberBetween(min, max) {
     return min + Math.round(Math.random() * max);
   }
