@@ -8,6 +8,7 @@ const data = require('./data.js');
 const config = require('../config/infrastructure.json');
 const storage = require('./storage');
 const state = require('./state');
+const uuidV4 = require('uuid/v4');
 
 class Consumer {
   constructor(consumerType) {
@@ -24,14 +25,15 @@ class Consumer {
   }
 
   rotateCurrent() {
-    if(!this.current || !storage.state[this.ctPl]) return console.log(`There are no ${this.ctPl} to rotate!`)
+    if (!this.current || !storage.state[this.ctP]) return console.log(`There are no ${this.ctPl} to rotate!`)
     const keys = R.keys(storage.state[this.ctPl]);
     const i = (keys.indexOf(this.current.consumerId) + 1) % keys.length;
     this.current = storage.state[this.ctPl][keys[i]]
   }
 
   create() {
-    const consumer = data[this.ct].call();
+    const consumerId = uuidV4();
+    const consumer = data[this.ct].call(undefined, consumerId);
     return request({
       uri: `${config.spokeHub}/${this.ctPl}`,
       method: 'POST',
@@ -39,8 +41,13 @@ class Consumer {
       headers: { 'x-spoke-admin': 'abc123' },
       body: consumer
     })
+      .then(R.set(R.lensProp('consumerId'), consumerId))
+      .then((c) => {
+        console.log(c)
+        return c;
+      })
       .then(data => Promise.all([
-        storage.putItem(`${this.ctPl}/${data[this.ctKey]}`, data),
+        storage.putItem(`${this.ctPl}/${consumerId}`, data),
         Promise.resolve(this.current = data),
         Promise.resolve(data)
       ]))
@@ -67,15 +74,13 @@ class Consumer {
       }))
     }
     console.log(` - deleting ${this.ct} ${consumer.name} from local store...`);
-    promiseArray.push(storage.deleteItem(`${this.ctPl}/${consumer[this.ctKey]}`));
+    promiseArray.push(storage.deleteItem(`${this.ctPl}/${consumer.consumerId}`));
     return Promise.all(promiseArray);
   }
 
 
-
-
-  deleteAll(){
-    if(!storage.state[this.ctPl] || !R.keys(storage.state[this.ctPl]).length) return Promise.resolve();
+  deleteAll() {
+    if (!storage.state[this.ctPl] || !R.keys(storage.state[this.ctPl]).length) return Promise.resolve();
     return Promise.props(R.map(this.delete.bind(this), storage.state[this.ctPl]))
       .then(() => this.current = undefined)
   }
@@ -83,9 +88,10 @@ class Consumer {
   issueAuthToken() {
 
     if (!this.current) return Promise.reject(`There\'s no ${this.ct} to issue a token for! Try running "${this.ct} create" to create one.`);
-    if (this.current.token) return Promise.reject(`Current ${thisaa.ct} already has token.`);
+    if (this.current.token) return Promise.reject(`Current ${this.ct} already has token.`);
 
     const uid = this.current[this.ctKey];
+    const consumerId = this.current.consumerId;
     const authLambdaKey = `${this.ct}AuthFunctionName`
     return lambda.invoke({
       FunctionName: config[authLambdaKey],
@@ -97,9 +103,9 @@ class Consumer {
       .then(response => R.tryCatch(JSON.parse, this.handleParseError)(response.Payload))
       .then(u.isError)
       .then(response => {
-        const updatedConsumer = R.set(R.lensProp('token'), response.body.token, storage.state[this.ctPl][uid]);
-        return storage.putItem(`${this.ctPl}/${uid}`, updatedConsumer)
-          .then(() => this.current = storage.state[this.ctPl][uid])
+        const updatedConsumer = R.set(R.lensProp('token'), response.body.token, storage.state[this.ctPl][consumerId]);
+        return storage.putItem(`${this.ctPl}/${consumerId}`, updatedConsumer)
+          .then(() => this.current = storage.state[this.ctPl][consumerId])
           .then(() => response);
       })
       .then((result) => ({ request: { uid }, response: result.body }));

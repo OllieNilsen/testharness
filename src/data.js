@@ -1,7 +1,7 @@
 const infraConfig = require('../config/infrastructure.json');
 const faker = require('faker');
 
-function client() {
+function client(consumerId) {
   return {
     "name": faker.name.findName().toLowerCase().split(' ').join('_'),
     "marketElements": {
@@ -11,11 +11,11 @@ function client() {
       "instrumentClass": "DOG",
       "instrument": "WLK"
     },
-    "clientUrl": infraConfig.client
+    "clientUrl": `${infraConfig.client}/${consumerId}`
   }
 }
 
-function provider() {
+function provider(consumerId) {
   return {
     "name": faker.name.findName().toLowerCase().split(' ').join('_'),
     "marketElements": {
@@ -25,7 +25,7 @@ function provider() {
       "instrumentClass": "DOG",
       "instrument": "WLK"
     },
-    "providerUrl": infraConfig.provider
+    "providerUrl": `${infraConfig.provider}/${consumerId}`
   }
 }
 
