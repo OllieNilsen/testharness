@@ -1,6 +1,15 @@
 const Promise = require('bluebird');
-
+const R = require('ramda');
+const t = (message, x) => {
+  console.log(message, x);
+  return x;
+}
 class U {
+
+  constructor() {
+    this.tap = R.curry(t);
+  }
+
   randomNumberBetween(min, max) {
     return min + Math.round(Math.random() * max);
   }
@@ -19,9 +28,9 @@ class U {
     return array[Math.floor(Math.random() * array.length)];
   }
 
-  isError(response){
+  isError(response) {
     return new Promise((resolve, reject) => {
-      if(response.statusCode > 399) reject(response)
+      if (response.statusCode > 399) reject(response)
       resolve(response);
     });
   }

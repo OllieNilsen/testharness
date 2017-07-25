@@ -67,14 +67,16 @@ vorpal
 
 vorpal
   .command('client createRFQ', 'creates an RFQ')
+  .alias('crfq')
   .action((args, cb) => {
-    return main.clients.createNewRFQ(clientToken)
+    return main.clients.createNewRFQ()
       .then(main.utils.logResponse)
       .then(response => {
         lastRFQ.rfqId = response.response.rfqId;
         cb()
       })
-      .catch(error => cb('Error Creating RFQ'));
+      .catch(cb)
+      // .catch(error => cb('Error Creating RFQ'));
   });
 
 
@@ -133,17 +135,13 @@ vorpal
 
 vorpal
   .command('provider getMessages', 'queries for posted data')
+  .alias('pgm')
   .action((args, cb) => {
     return main.providers.getPostedData()
-      .then(i)
-      .then(response => {
-        console.log('************* REQUEST *************');
-        console.log(JSON.stringify({}, null, 4));
-        console.log('************* RESPONSE *************');
-        console.log(JSON.stringify(response, null, 4));
-        cb();
-      })
-      .catch(error => cb('No RFQ received'));
+      .then(main.utils.logResponse)
+      .then(() => cb())
+      .catch(cb);  // .catch(() => cb('Error getting data.'));
+
   });
 
 vorpal

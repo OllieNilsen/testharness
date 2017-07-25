@@ -1,7 +1,19 @@
 const request = require('request-promise');
 const data = require('./data.js');
-const config =  require('../config/infrastructure.json');
+const config = require('../config/infrastructure.json');
 const Consumer = require('./consumer');
+const R = require('ramda');
+const u = require('./utils');
+const storage = require('./storage');
+
+function saveMessage(m) {
+  const tableName = m.rfqId ? 'rfq' : 'quote';
+  const mId = m[`${tableName}Id`];
+
+  const consumerId = this.current.consumerId;
+  console.log("consumerId", `${tableName}/${consumerId}/${mId}`)
+  return storage.putItem(`${tableName}/${consumerId}/${mId}`, m)
+}
 
 class Provider extends Consumer {
 
@@ -21,12 +33,20 @@ class Provider extends Consumer {
   }
 
   getPostedData() {
-    return request({
-      uri: `${config.provider}`,
+    const params = {
+      uri: `${config.provider}/${this.current.consumerId}`,
       method: 'GET',
       json: true
-    })
-      .then(response => response.items.map(item => item.body));
+    };
+
+    console.log('params', params)
+    return request(params)
+      .then(u.tap('response'))
+      .then(response => response.items.map(item =>  item.body.eventPayload))
+      .then(u.tap('mapped'))
+      .then(R.map(saveMessage.bind(this)))
+      // .then(u.tap('saved'));
+
   }
 
   deleteRFQ() {
