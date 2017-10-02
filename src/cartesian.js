@@ -62,7 +62,7 @@ class Generators {
 
   /**
    * Generator for boolean iterator. Yields `true`, then `false`.
-   * @returns {boolean}.z§
+   * @returns {boolean}.
    */
   * boolean() {
     yield true;

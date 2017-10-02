@@ -3,7 +3,5 @@
   "providerAuthFunctionName": "arn:aws:lambda:eu-west-1:355555488900:function:RFQ_DEV_provider_authentication_lambda_create",
   "clientAuthFunctionName": "arn:aws:lambda:eu-west-1:355555488900:function:RFQ_DEV_client_authentication_lambda_create",
   "clientAuthDeleteFunctionName": "arn:aws:lambda:eu-west-1:355555488900:function:RFQ_DEV_client_authentication_lambda_delete",
-  "providerAuthDeleteFunctionName": "arn:aws:lambda:eu-west-1:355555488900:function:RFQ_DEV_provider_authentication_lambda_delete",
-  "provider": "https://9q2czxdtyd.execute-api.eu-west-1.amazonaws.com/dev/provider",
-  "client": "https://9q2czxdtyd.execute-api.eu-west-1.amazonaws.com/dev/client"
+  "providerAuthDeleteFunctionName": "arn:aws:lambda:eu-west-1:355555488900:function:RFQ_DEV_provider_authentication_lambda_delete"
 }

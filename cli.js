@@ -13,7 +13,8 @@ const R = require('ramda');
 
 /************ client *************/
 vorpal
-  .command('gen', 'Recursively generates RFQs and Quotes')
+  .command('generate rfqs', 'Recursively generates RFQs and Quotes')
+  .alias('gen')
   .action((args, cb) => {
     return main.rfqGenerator.rfqs.execute(R.values(configs))
       .then(() => cb())
