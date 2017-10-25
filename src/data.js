@@ -1,31 +1,17 @@
 const infraConfig = require('../config/infrastructure.json');
 const faker = require('faker');
 
-function client(consumerId) {
+function client(name) {
   return {
-    "name": faker.name.findName().toLowerCase().split(' ').join('_'),
-    "marketElements": {
-      "exchange": "FSI",
-      "market": "INS",
-      "section": "UK",
-      "instrumentClass": "CONTENT",
-      "instrument": "CONTENT"
-    },
-    "clientUrl": `https://abc.def/${consumerId}`
+    "name": name || faker.name.findName().toLowerCase().split(' ').join('_'),
+    "userUrl": `https://abc.def`
   }
 }
 
-function provider(consumerId) {
+function provider(name) {
   return {
-    "name": faker.name.findName().toLowerCase().split(' ').join('_'),
-    "marketElements": {
-      "exchange": "FSI",
-      "market": "INS",
-      "section": "UK",
-      "instrumentClass": "CONTENT",
-      "instrument": "CONTENT"
-    },
-    "providerUrl": "https://aviva.localtunnel.me/rfqs"
+    "name": name || faker.name.findName().toLowerCase().split(' ').join('_'),
+    "userUrl": "https://aviva.localtunnel.me/rfqs"
   }
 }
 

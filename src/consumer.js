@@ -31,16 +31,26 @@ class Consumer {
     this.current = storage.state[this.ctPl][keys[i]]
   }
 
-  create() {
+  create(mId, name) {
+    const marketId = mId || '01187586-b69e-4a95-912e-109165029f78';
     const consumerId = uuidV4();
-    const consumer = data[this.ct].call(undefined, consumerId);
+    const consumer = data[this.ct].call(undefined, name);
     return request({
       uri: `${config.spokeHub}/${this.ctPl}`,
+      qs: { marketId },
       method: 'POST',
       json: true,
       headers: { 'x-spoke-admin': 'abc123' },
       body: consumer
     })
+
+      .then(x => request({
+        uri: `${config.spokeHub}/${this.ctPl}/${x.userId} `,
+        qs: { marketId },
+        json: true,
+        method: 'GET',
+        headers: { 'x-spoke-admin': 'abc123' }
+      }))
       .then(R.set(R.lensProp('consumerId'), consumerId))
       .then(data => Promise.all([
         storage.putItem(`${this.ctPl}/${consumerId}`, data),
@@ -86,7 +96,7 @@ class Consumer {
     if (!this.current) return Promise.reject(`There\'s no ${this.ct} to issue a token for! Try running "${this.ct} create" to create one.`);
     if (this.current.token) return Promise.reject(`Current ${this.ct} already has token.`);
 
-    const uid = this.current[this.ctKey];
+    const uid = this.current.meta.userId;
     const consumerId = this.current.consumerId;
     const authLambdaKey = `${this.ct}AuthFunctionName`
     return lambda.invoke({
@@ -96,6 +106,7 @@ class Consumer {
         uid
       })
     })
+
       .then(response => R.tryCatch(JSON.parse, this.handleParseError)(response.Payload))
       .then(u.isError)
       .then(response => {
@@ -104,7 +115,10 @@ class Consumer {
           .then(() => this.current = storage.state[this.ctPl][consumerId])
           .then(() => response);
       })
-      .then((result) => ({ request: { uid }, response: result.body }));
+      .then((result) => ({ request: { uid }, response: result.body }))
+      .catch(x => {
+        console.log(x.body.errors);
+      });a
 
   }
 }

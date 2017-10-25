@@ -23,7 +23,7 @@ vorpal
 
 
 vorpal
-  .command('client', 'logs out the current client')
+  .command('client', 'logs the current client')
   .alias('c')
   .option('-a --all', 'get all clients in storage')
   .action(((args, cb) => {
@@ -40,7 +40,7 @@ vorpal
   });
 
 vorpal
-  .command('client create', 'creates a client')
+  .command('client create [name]', 'creates a client')
   .alias('cc')
   .option('-t --token', 'issue token for the created client')
   .action((args, cb) => {
@@ -48,7 +48,7 @@ vorpal
       client => main.clients.issueAuthToken(client.clientId).then(main.utils.logResponse) :
       () => Promise.resolve();
 
-    return main.clients.create()
+    return main.clients.create(undefined, args.name)
       .then(main.utils.logResponse)
       .then(() => issueToken(main.clients.current))
       .then(() => cb())
@@ -100,7 +100,7 @@ vorpal
   });
 
 vorpal
-  .command('provider create', 'creates a provider')
+  .command('provider create [name]', 'creates a provider')
   .alias('pc')
   .option('-t --token', 'issues token for the provider')
   .action((args, cb) => {
@@ -108,7 +108,7 @@ vorpal
       () => main.providers.issueAuthToken().then(main.utils.logResponse) :
       () => Promise.resolve();
 
-    return main.providers.create()
+    return main.providers.create(undefined,args.name)
       .then(main.utils.logResponse)
       .then(issueToken)
       .then(() => cb())
