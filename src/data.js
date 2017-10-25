@@ -5,13 +5,13 @@ function client(consumerId) {
   return {
     "name": faker.name.findName().toLowerCase().split(' ').join('_'),
     "marketElements": {
-      "exchange": "SRV",
-      "market": "PETS",
+      "exchange": "FSI",
+      "market": "INS",
       "section": "UK",
-      "instrumentClass": "DOG",
-      "instrument": "WLK"
+      "instrumentClass": "CONTENT",
+      "instrument": "CONTENT"
     },
-    "clientUrl": `${infraConfig.client}/${consumerId}`
+    "clientUrl": `https://abc.def/${consumerId}`
   }
 }
 
@@ -19,13 +19,13 @@ function provider(consumerId) {
   return {
     "name": faker.name.findName().toLowerCase().split(' ').join('_'),
     "marketElements": {
-      "exchange": "SRV",
-      "market": "PETS",
+      "exchange": "FSI",
+      "market": "INS",
       "section": "UK",
-      "instrumentClass": "DOG",
-      "instrument": "WLK"
+      "instrumentClass": "CONTENT",
+      "instrument": "CONTENT"
     },
-    "providerUrl": `${infraConfig.provider}/${consumerId}`
+    "providerUrl": "https://aviva.localtunnel.me/rfqs"
   }
 }
 

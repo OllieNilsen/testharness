@@ -112,7 +112,7 @@ vorpal
       .then(main.utils.logResponse)
       .then(issueToken)
       .then(() => cb())
-      .catch(error => cb('Error Creating Provider'));
+      .catch(error => cb(error));
   });
 
 vorpal

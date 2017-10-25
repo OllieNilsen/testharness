@@ -1,4 +1,4 @@
 {
-  "delay": 500,
-  "batchSize": 5
+  "delay": 30000,
+  "batchSize": 1
 }

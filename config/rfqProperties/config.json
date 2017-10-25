@@ -1,31 +1,211 @@
 [
   {
-    "name": "postcode",
+    "path": "mainPolicyHolder/info/dob",
     "type": "list",
-    "value": ["EC1Y 2AL", "E1 7HQ", "KT10 8LG", "GL6 9BZ"]
+    "value": [708520437489]
   },
   {
-    "name": "dogBreed",
+    "path": "mainPolicyHolder/info/gender",
     "type": "list",
-    "value": ["Labradoodle", "GoldenRetriever", "Shitzu", "Pug"]
+    "value": ["Female"]
   },
   {
-    "name": "walkDays",
+    "path": "mainPolicyHolder/info/relationshipStatus",
     "type": "list",
-    "value": [["MON", "THURS"], ["SAT"], ["MON", "WED"], ["FRI", "MON"]]
+    "value": ["Separated"]
   },
   {
-    "name": "walkTime",
+    "path": "mainPolicyHolder/info/job",
     "type": "list",
-    "value": ["AM", "PM"]
+    "value": ["Nurse"]
   },
   {
-    "name": "walkLength",
-    "type": "numeric",
-    "value": {
-      "min": 1,
-      "max": 20,
-      "step": 2
-    }
+    "path": "mainPolicyHolder/info/employment",
+    "type": "list",
+    "value": ["Employed"]
+  },
+  {
+    "path": "mainPolicyHolder/info/industry",
+    "type": "list",
+    "value": ["health"]
+  },
+  {
+    "path": "mainPolicyHolder/info/otherWork",
+    "type": "list",
+    "value": [false]
+  },
+  {
+    "path": "whatToInsure",
+    "type": "list",
+    "value": ["Contents only"]
+  },
+  {
+    "path": "policyStart",
+    "type": "list",
+    "value": [1508422602000]
+  },
+  {
+    "path": "payAnnuallyMonthly",
+    "type": "list",
+    "value": ["Annually"]
+  },
+  {
+    "path": "yearsNoClaim",
+    "type": "list",
+    "value": [2]
+  },
+  {
+    "path": "home/house/kind",
+    "type": "list",
+    "value": ["Link-detached dormer-bungalow"]
+  },
+  {
+    "path": "home/postcode",
+    "type": "list",
+    "value": ["a", "b"]
+  },
+  {
+    "path": "home/ownOrRent",
+    "type": "list",
+    "value": ["rent"]
+  },
+  {
+    "path": "home/isMainResidence",
+    "type": "list",
+    "value": ["Yes"]
+  },
+  {
+    "path": "home/whoLivesInYourHome",
+    "type": "list",
+    "value": ["Me and my family"]
+  },
+  {
+    "path": "home/numberAdults",
+    "type": "list",
+    "value": [1]
+  },{
+    "path": "home/numberChildren",
+    "type": "list",
+    "value": [2]
+  },
+  {
+    "path": "home/currentlyUndergoingBuildingWorks",
+    "type": "list",
+    "value": [false]
+  },
+  {
+    "path": "home/hasBeenFlooded",
+    "type": "list",
+    "value": [false]
+  },
+  {
+    "path": "home/whenArePeopleHome",
+    "type": "list",
+    "value": ["Night only"]
+  },
+  {
+    "path": "home/homeEmptyMoreThirtyDays",
+    "type": "list",
+    "value": [false]
+  },
+  {
+    "path": "home/smokers",
+    "type": "list",
+    "value": [false]
+  },
+  {
+    "path": "home/homeUsedForBusiness",
+    "type": "list",
+    "value": [false]
+  },
+  {
+    "path": "home/propertyForSale",
+    "type": "list",
+    "value": [false]
+  },
+  {
+    "path": "home/mainDoorLockType",
+    "type": "list",
+    "value": ["5-lever mortice deadlock"]
+  },
+  {
+    "path": "home/windowLocks",
+    "type": "list",
+    "value": [false]
+  },
+  {
+    "path": "home/numberOfSmokeAlarms",
+    "type": "list",
+    "value": ["2"]
+  },
+  {
+    "path": "home/neighborhoodWatch",
+    "type": "list",
+    "value": [false]
+  },
+  {
+    "path": "home/whenBuilt",
+    "type": "list",
+    "value": [1982]
+  },
+  {
+    "path": "home/percentRoofFlat",
+    "type": "list",
+    "value": ["None"]
+  },
+  {
+    "path": "home/bedrooms",
+    "type": "list",
+    "value": [2]
+  },
+  {
+    "path": "home/receptionRooms",
+    "type": "list",
+    "value": [1]
+  },
+  {
+    "path": "home/bathrooms",
+    "type": "list",
+    "value": [1]
+  },
+  {
+    "path": "home/otherRooms",
+    "type": "list",
+    "value": [0]
+  },
+  {
+    "path": "home/treesWithinFiveMeters",
+    "type": "list",
+    "value": [false]
+  },
+  {
+    "path": "home/roofMaterial",
+    "type": "list",
+    "value": ["Tiles"]
+  },
+  {
+    "path": "home/wallMaterial",
+    "type": "list",
+    "value": ["Brick"]
+  },
+  {
+    "path": "home/fourHundredMetersFromWater",
+    "type": "list",
+    "value": [true]
+  },
+  {
+    "path": "home/significantExternalCracks",
+    "type": "list",
+    "value": [false]
+  },
+  {
+    "path": "home/heaveLandslipSubsidence",
+    "type": "list",
+    "value": [false]
+  },
+  {
+    "path": "home/underpinningStructuralSupport",
+    "type": "list",
+    "value": [false]
   }
 ]

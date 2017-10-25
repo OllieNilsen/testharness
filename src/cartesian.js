@@ -16,7 +16,7 @@ class Sources {
 
   numeric(name, v) {
     this[name] = { type: 'numeric', value: { min: v.min, max: v.max, step: v.step } };
-    sourceCountArray.push(Math.floor((v.max - v.min)/v.step || 1));
+    sourceCountArray.push(Math.floor((v.max - v.min) / v.step || 1));
   }
 
   boolean(name) {
@@ -84,7 +84,12 @@ function takeNext(n, iterator) {
   return a;
 }
 
-const getVal = R.map(R.prop('value'));
+const render = R.pipe(
+  // get values for iterators
+  R.map(R.prop('value')),
+  // map paths to nested object structures
+  obj => R.reduce((acc, key) => R.set(R.lensPath(key.split('/')), obj[key], acc), {}, R.keys(obj))
+);
 
 /**
  * Generator function to generate all combinations of properties for an RFQ.
@@ -107,7 +112,7 @@ function *lazyCartesian(sources) {
   let values = R.map(i => i.next(), iterators);//initialise the iterators
 
   // yield the rendered version of the values object.
-  yield R.map(v => v.value, values);
+  yield render(values);
 
   /**
    * Re-initiates an iterator. It takes a key-value pair as input and returns a
@@ -130,17 +135,19 @@ function *lazyCartesian(sources) {
         R.over(R.lensPath([1, 0]), pair => [pair[0], iterators[pair[0]].next()]), //increment the first unfinished iterator
         R.tap(() => allDone = true) // else, set `allDone` to `true` and pass array on unchanged
       ),
-      R.unnest, //flatten the array
-      R.fromPairs// convert array back to object.
+      R.unnest, //flatten the arrayq
+      R.fromPairs,// convert array back to object.
     )(values);
 
+
+    const rendered = render(values);
     if (allDone) {
       // All sub-iterators are done, so return, so that the mother-iterator is set to
       // `done`, too
-      return getVal(values);
+      return rendered;
     } else {
       // Not all sub-iterators are done: use yield, carry on.
-      yield getVal(values);
+      yield rendered;
     }
   }
 
