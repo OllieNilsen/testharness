@@ -17,7 +17,6 @@ const u = require('./utils');
 function createRfq(payload) {
   return {
     lit: false,
-    requestGroup: [],
     payload
   };
 }
@@ -44,15 +43,34 @@ function pauseFor(delay) {
 }
 
 
-function augmentRfq(rfq){
+function augmentRfq(rfq) {
   const min = 100000000;
   const max = 999999999;
+
+
+  const emailDomains = [
+    'gmail.com', 'yahoo.com', 'hotmail.com', 'me.com', 'yahoo.co.uk', 'icloud.com'
+  ];
+
+
+  function getRandomIndex(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  const randomEmail = () => R.pipe(
+    R.map(faker.hacker.abbreviation),
+    R.map(x => x.toLowerCase()),
+    R.join(getRandomIndex(['', '_', '-', '1', '2', '3', '4', '5', '6'])),
+    x => x + Math.floor(Math.random() * 10000) + 10,
+    x => x + '@',
+    x => x + getRandomIndex(['gmail.com', 'yahoo.com', 'hotmail.com', 'me.com', 'icloud.com', 'yahoo.co.uk'])
+  )(Array(Math.floor(Math.random() * 9) + 1));
   const fakePhonenumber = '07' + (Math.floor(Math.random() * (max - min)) + min);// fake uk mobile number
-  const phoneSetter = R.set(R.lensPath(['mainPolicyHolder', 'mobileNumber']),fakePhonenumber);
-  const emailSetter = R.set(R.lensPath(['mainPolicyHolder', 'email']),faker.internet.email());
-  const fnSetter = R.set(R.lensPath(['mainPolicyHolder', 'info','firstName']),faker.name.firstName());
-  const lnSetter = R.set(R.lensPath(['mainPolicyHolder', 'info','lastName']),faker.name.lastName());
-  const policyStartSetter = R.set(R.lensPath(['policyStart']),Date.now() + (60*60*48*1000));
+  const phoneSetter = R.set(R.lensPath(['mainPolicyHolder', 'mobileNumber']), fakePhonenumber);
+  const emailSetter = R.set(R.lensPath(['mainPolicyHolder', 'email']), randomEmail());
+  const fnSetter = R.set(R.lensPath(['mainPolicyHolder', 'info', 'firstName']), faker.name.firstName());
+  const lnSetter = R.set(R.lensPath(['mainPolicyHolder', 'info', 'lastName']), faker.name.lastName());
+  const policyStartSetter = R.set(R.lensPath(['policyStart']), Date.now() + (60 * 60 * 48 * 1000));
   return R.pipe(phoneSetter, emailSetter, fnSetter, lnSetter, policyStartSetter)(rfq)
 }
 

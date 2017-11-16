@@ -4,14 +4,14 @@ const faker = require('faker');
 function client(name) {
   return {
     "name": name || faker.name.findName().toLowerCase().split(' ').join('_'),
-    "userUrl": `https://abc.def`
+    "userUrl": `https://1cf645hrb8.execute-api.eu-west-1.amazonaws.com/poke/poke_rfq_ingress/${name}`
   }
 }
 
 function provider(name) {
   return {
     "name": name || faker.name.findName().toLowerCase().split(' ').join('_'),
-    "userUrl": "https://aviva.localtunnel.me/rfqs"
+    "userUrl": `https://1cf645hrb8.execute-api.eu-west-1.amazonaws.com/poke/poke_rfq_ingress/${name}`
   }
 }
 

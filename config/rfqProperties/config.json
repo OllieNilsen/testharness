@@ -2,210 +2,317 @@
   {
     "path": "mainPolicyHolder/info/dob",
     "type": "list",
-    "value": [708520437489]
+    "value": [
+      708520437489
+    ]
   },
   {
     "path": "mainPolicyHolder/info/gender",
     "type": "list",
-    "value": ["Female"]
+    "value": [
+      "Female",
+      "Male"
+    ]
   },
   {
     "path": "mainPolicyHolder/info/relationshipStatus",
     "type": "list",
-    "value": ["Separated"]
+    "value": [
+      "Married",
+      "Single",
+      "Partner",
+      "Common law",
+      "Civil partnership",
+      "Separated",
+      "Divorced",
+      "Widowed"
+    ]
   },
   {
     "path": "mainPolicyHolder/info/job",
     "type": "list",
-    "value": ["Nurse"]
+    "value": [
+      "Teacher"
+    ]
   },
   {
     "path": "mainPolicyHolder/info/employment",
     "type": "list",
-    "value": ["Employed"]
+    "value": [
+      "Employed"
+    ]
   },
   {
     "path": "mainPolicyHolder/info/industry",
     "type": "list",
-    "value": ["health"]
+    "value": [
+      "Education"
+    ]
   },
   {
     "path": "mainPolicyHolder/info/otherWork",
     "type": "list",
-    "value": [false]
+    "value": [
+      false
+    ]
+  },
+  {
+    "path": "coverAmount",
+    "type": "list",
+    "value": [30000, 40000, 50000, 60000]
   },
   {
     "path": "whatToInsure",
     "type": "list",
-    "value": ["Contents only"]
+    "value": [
+      "Contents only"
+    ]
   },
   {
     "path": "policyStart",
     "type": "list",
-    "value": [1508422602000]
+    "value": [
+      1508422602000
+    ]
   },
   {
     "path": "payAnnuallyMonthly",
     "type": "list",
-    "value": ["Annually"]
+    "value": [
+      "Annually"
+    ]
   },
   {
     "path": "yearsNoClaim",
     "type": "list",
-    "value": [2]
+    "value": [
+      2
+    ]
   },
   {
     "path": "home/house/kind",
     "type": "list",
-    "value": ["Link-detached dormer-bungalow"]
+    "value": [
+      "Semi-detached house"
+    ]
   },
   {
     "path": "home/postcode",
     "type": "list",
-    "value": ["a", "b"]
+    "value": [
+      "a",
+      "b"
+    ]
   },
   {
     "path": "home/ownOrRent",
     "type": "list",
-    "value": ["rent"]
+    "value": [
+      "own"
+    ]
   },
   {
     "path": "home/isMainResidence",
     "type": "list",
-    "value": ["Yes"]
+    "value": [
+      "Yes"
+    ]
   },
   {
     "path": "home/whoLivesInYourHome",
     "type": "list",
-    "value": ["Me and my family"]
+    "value": [
+      "Me and my family"
+    ]
   },
   {
     "path": "home/numberAdults",
     "type": "list",
-    "value": [1]
-  },{
+    "value": [
+      1
+    ]
+  },
+  {
     "path": "home/numberChildren",
     "type": "list",
-    "value": [2]
+    "value": [
+      2
+    ]
   },
   {
     "path": "home/currentlyUndergoingBuildingWorks",
     "type": "list",
-    "value": [false]
+    "value": [
+      false
+    ]
   },
   {
     "path": "home/hasBeenFlooded",
     "type": "list",
-    "value": [false]
+    "value": [
+      false
+    ]
   },
   {
     "path": "home/whenArePeopleHome",
     "type": "list",
-    "value": ["Night only"]
+    "value": [
+      "Night only",
+      "Day and night",
+      "Day only"
+    ]
   },
   {
     "path": "home/homeEmptyMoreThirtyDays",
     "type": "list",
-    "value": [false]
+    "value": [
+      false
+    ]
   },
   {
     "path": "home/smokers",
     "type": "list",
-    "value": [false]
+    "value": [
+      true,
+      false
+    ]
   },
   {
     "path": "home/homeUsedForBusiness",
     "type": "list",
-    "value": [false]
+    "value": [
+      false
+    ]
   },
   {
     "path": "home/propertyForSale",
     "type": "list",
-    "value": [false]
+    "value": [
+      false
+    ]
   },
   {
     "path": "home/mainDoorLockType",
     "type": "list",
-    "value": ["5-lever mortice deadlock"]
+    "value": [
+      "key-operated multipoint lock",
+      "5-lever mortice deadlock",
+      "5 lever mortice deadlock conforming to BS 3621",
+      "Rim automatic deadlatch with key-locking handle",
+      "A different type of lock"
+    ]
   },
   {
     "path": "home/windowLocks",
     "type": "list",
-    "value": [false]
+    "value": [
+      false
+    ]
   },
   {
     "path": "home/numberOfSmokeAlarms",
     "type": "list",
-    "value": ["2"]
+    "value": [
+      "1",
+      "2"
+    ]
   },
   {
     "path": "home/neighborhoodWatch",
     "type": "list",
-    "value": [false]
+    "value": [
+      false
+    ]
   },
   {
     "path": "home/whenBuilt",
     "type": "list",
-    "value": [1982]
+    "value": [
+      1982
+    ]
   },
   {
     "path": "home/percentRoofFlat",
     "type": "list",
-    "value": ["None"]
+    "value": [
+      "None"
+    ]
   },
   {
     "path": "home/bedrooms",
     "type": "list",
-    "value": [2]
+    "value": [
+      2
+    ]
   },
   {
     "path": "home/receptionRooms",
     "type": "list",
-    "value": [1]
+    "value": [
+      1
+    ]
   },
   {
     "path": "home/bathrooms",
     "type": "list",
-    "value": [1]
+    "value": [
+      1
+    ]
   },
   {
     "path": "home/otherRooms",
     "type": "list",
-    "value": [0]
+    "value": [
+      0
+    ]
   },
   {
     "path": "home/treesWithinFiveMeters",
     "type": "list",
-    "value": [false]
+    "value": [
+      false
+    ]
   },
   {
     "path": "home/roofMaterial",
     "type": "list",
-    "value": ["Tiles"]
+    "value": [
+      "Tiles"
+    ]
   },
   {
     "path": "home/wallMaterial",
     "type": "list",
-    "value": ["Brick"]
+    "value": [
+      "Brick"
+    ]
   },
   {
     "path": "home/fourHundredMetersFromWater",
     "type": "list",
-    "value": [true]
+    "value": [
+      true
+    ]
   },
   {
     "path": "home/significantExternalCracks",
     "type": "list",
-    "value": [false]
+    "value": [
+      false
+    ]
   },
   {
     "path": "home/heaveLandslipSubsidence",
     "type": "list",
-    "value": [false]
+    "value": [
+      false
+    ]
   },
   {
     "path": "home/underpinningStructuralSupport",
     "type": "list",
-    "value": [false]
+    "value": [
+      false
+    ]
   }
 ]

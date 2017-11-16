@@ -11,17 +11,17 @@ const db = pgp(cn);
 
 // Partition the table by msoaCode and select a random postcode within each partition.
 // Order the resulting set by random (to prevent the msoaCodes to impose an order).
-const query = `WITH summary AS 
-                 ( 
+const query = `WITH summary AS
+                 (
                    SELECT p."postcode",
-                          ROW_NUMBER() OVER(PARTITION BY p."msoaCode" ORDER BY RANDOM()) AS rk 
-                   FROM staging p 
+                          ROW_NUMBER() OVER(PARTITION BY p."msoaCode" ORDER BY RANDOM()) AS rk
+                   FROM staging p
                    WHERE p."households" IS NOT NULL
-                 ) 
-               SELECT s.postcode FROM summary s 
-               WHERE s.rk = 1 
+                 )
+               SELECT s.postcode FROM summary s
+               WHERE s.rk = 1
                ORDER BY RANDOM()
-               LIMIT 20;`;
+               LIMIT 120;`;
 
 // Execute query and map results to an array of postcodes.
 module.exports.get = (async() => R.map(R.view(R.lensProp('postcode')), await db.query(query)));
