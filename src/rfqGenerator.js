@@ -100,7 +100,7 @@ async function executeRfqConfigs(configs) {
   const [configNames, configValues] = [R.keys(configs), R.values(configs)];
   const marketId = undefined;
   return Promise.mapSeries(configNames, async name => {
-    return clients.create(marketId, name)
+    return clients.create(marketId, `${name} ${new Date().toString().split(' GMT')[0].replace(/ /g, '/')}`)
       .then(async (client) => {
         const pc = await postcodes.get();
         const c = R.map(
@@ -115,21 +115,6 @@ async function executeRfqConfigs(configs) {
       });
   });
 }
-
-// async function executeRfqConfigs(configs, token) {
-//   console.log({ configValues: R.values(configs) });
-//   return Promise.map(R.values(configs), async config => {
-//     const pc = await postcodes.get();
-//     const c = R.map(R.ifElse(p => p.path === 'home/postcode', p => R.set(R.lensProp('value'), pc, p), R.identity), config);
-//     const sources = new cartesian.Sources();
-//     c.forEach(p => sources[p.type](p.path, p.value));
-//     console.log({ sources });
-//     const rfqSet = cartesian.lazyCartesian(sources);
-//     console.log({ rfqSet });
-//     state.totalRfqsToGenerate = cartesian.sourceCountArray.reduce((a, b) => a * b, 1);
-//     return throttleRfqs(throttleConfig.delay, throttleConfig.batchSize, rfqSet, token);
-//   });
-// }
 
 module.exports =
   {
