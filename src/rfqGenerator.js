@@ -35,13 +35,13 @@ async function makeRfqRequest(rfq) {
     uri: `${infra.spokeHub}/rfqs`,
     body: rfq,
     json: true
-  }
+  };
   try {
     const result = await rp(options);
     console.log(result);
     return result;
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
 }
 
@@ -78,14 +78,14 @@ function augmentRfq(rfq) {
   const fnSetter = R.set(R.lensPath(['mainPolicyHolder', 'info', 'firstName']), faker.name.firstName());
   const lnSetter = R.set(R.lensPath(['mainPolicyHolder', 'info', 'lastName']), faker.name.lastName());
   const policyStartSetter = R.set(R.lensPath(['policyStart']), Date.now() + (60 * 60 * 48 * 1000));
-  return R.pipe(phoneSetter, emailSetter, fnSetter, lnSetter, policyStartSetter)(rfq)
+  return R.pipe(phoneSetter, emailSetter, fnSetter, lnSetter, policyStartSetter)(rfq);
 }
 
 async function throttleRfqs(delay, numberOfRfqs, rfqSet, token) {
   const currentSet = R.map(augmentRfq, cartesian.takeNext(numberOfRfqs, rfqSet));
 
   R.map(() => state.increment('totalRfqs'), Array(currentSet.length).fill(0));
-  await Promise.map(currentSet, async rfqBody => makeRfqRequest(createRfq(rfqBody), token))
+  await Promise.map(currentSet, async rfqBody => makeRfqRequest(createRfq(rfqBody), token));
   state.render();
   await pauseFor(delay);
 
@@ -96,47 +96,42 @@ async function throttleRfqs(delay, numberOfRfqs, rfqSet, token) {
   }
 }
 
-// async function executeRfqConfigs(configs) {
-//   const [configNames, configValues] = [R.keys(configs), R.flatten(R.values(configs))];
-//   const marketId = undefined;
-//   return Promise.mapSeries(configNames, async name => {
-//     return clients.create(marketId, name)
-//       .then(async () => {
-//         const pc = await postcodes.get();
-//         console.log(configValues[0]);
-//         console.log(configNames.indexOf(name));
-//         // console.log({ a: typeof(configValues[configNames.indexOf(name)]) });
-//         const c = R.map(
-//           R.ifElse(p => p.path === 'home/postcode', p => R.set(R.lensProp('value'), pc, p), R.identity),
-//           configValues[configNames.indexOf(name)]
-//         );
-//         console.log({ c });
-//         const sources = new cartesian.Sources();
-//         c.forEach(p => sources[p.type](p.path, p.value));
-//         // console.log({ sources });
-//         const rfqSet = cartesian.lazyCartesian(sources);
-//         state.totalRfqsToGenerate = cartesian.sourceCountArray.reduce((a, b) => a * b, 1);
-//         console.log('pre throttle');
-//         return throttleRfqs(rfqSet, clients.current.token);
-//       });
-//   });
-// }
-
-async function executeRfqConfigs(configs, token) {
-  return Promise.map(R.values(configs), async config => {
-    const pc = await postcodes.get();
-    const c = R.map(R.ifElse(p => p.path === 'home/postcode', p => R.set(R.lensProp('value'), pc, p), R.identity), config);
-    const sources = new cartesian.Sources();
-    c.forEach(p => sources[p.type](p.path, p.value));
-    const rfqSet = cartesian.lazyCartesian(sources);
-
-    state.totalRfqsToGenerate = cartesian.sourceCountArray.reduce((a, b) => a * b, 1);
-    return throttleRfqs(throttleConfig.delay, throttleConfig.batchSize, rfqSet, token)
+async function executeRfqConfigs(configs) {
+  const [configNames, configValues] = [R.keys(configs), R.values(configs)];
+  const marketId = undefined;
+  return Promise.mapSeries(configNames, async name => {
+    return clients.create(marketId, name)
+      .then(async (client) => {
+        const pc = await postcodes.get();
+        const c = R.map(
+          R.ifElse(p => p.path === 'home/postcode', p => R.set(R.lensProp('value'), pc, p), R.identity),
+          configValues[configNames.indexOf(name)]
+        );
+        const sources = new cartesian.Sources();
+        c.forEach(p => sources[p.type](p.path, p.value));
+        const rfqSet = cartesian.lazyCartesian(sources);
+        state.totalRfqsToGenerate = cartesian.sourceCountArray.reduce((a, b) => a * b, 1);
+        return throttleRfqs(throttleConfig.delay, throttleConfig.batchSize, rfqSet, client.response.data.token);
+      });
   });
 }
 
-module.exports = {
-  rfqs: {
+// async function executeRfqConfigs(configs, token) {
+//   console.log({ configValues: R.values(configs) });
+//   return Promise.map(R.values(configs), async config => {
+//     const pc = await postcodes.get();
+//     const c = R.map(R.ifElse(p => p.path === 'home/postcode', p => R.set(R.lensProp('value'), pc, p), R.identity), config);
+//     const sources = new cartesian.Sources();
+//     c.forEach(p => sources[p.type](p.path, p.value));
+//     console.log({ sources });
+//     const rfqSet = cartesian.lazyCartesian(sources);
+//     console.log({ rfqSet });
+//     state.totalRfqsToGenerate = cartesian.sourceCountArray.reduce((a, b) => a * b, 1);
+//     return throttleRfqs(throttleConfig.delay, throttleConfig.batchSize, rfqSet, token);
+//   });
+// }
+
+module.exports =
+  {
     execute: executeRfqConfigs
-  }
-};
+  };
