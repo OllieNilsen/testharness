@@ -11,6 +11,8 @@ const Promise = require('bluebird');
 const state = require('./state');
 const R = require('ramda');
 const u = require('./utils');
+const fs = require('fs');
+const readFile = Promise.promisify(fs.readFile, { context: fs });
 
 /*********************** RFQS *************************/
 
@@ -81,16 +83,17 @@ function augmentRfq(rfq) {
   return R.pipe(phoneSetter, emailSetter, fnSetter, lnSetter, policyStartSetter)(rfq);
 }
 
-async function throttleRfqs(delay, numberOfRfqs, rfqSet, token) {
-  const currentSet = R.map(augmentRfq, cartesian.takeNext(numberOfRfqs, rfqSet));
+async function throttleRfqs(rfqSet, token) {
+  const throttleConfig = JSON.parse(await readFile(`${__dirname}/../config/throttle.json`, 'utf8'));
+  const currentSet = R.map(augmentRfq, cartesian.takeNext(throttleConfig.batchSize, rfqSet));
 
   R.map(() => state.increment('totalRfqs'), Array(currentSet.length).fill(0));
   await Promise.map(currentSet, async rfqBody => makeRfqRequest(createRfq(rfqBody), token));
   state.render();
-  await pauseFor(delay);
+  await pauseFor(throttleConfig.delay);
 
   if (currentSet.length) {
-    return throttleRfqs(delay, numberOfRfqs, rfqSet, token);
+    return throttleRfqs(rfqSet, token);
   } else {
     return state.totalRfqs;
   }
@@ -111,7 +114,7 @@ async function executeRfqConfigs(configs) {
         c.forEach(p => sources[p.type](p.path, p.value));
         const rfqSet = cartesian.lazyCartesian(sources);
         state.totalRfqsToGenerate = cartesian.sourceCountArray.reduce((a, b) => a * b, 1);
-        return throttleRfqs(throttleConfig.delay, throttleConfig.batchSize, rfqSet, client.response.data.token);
+        return throttleRfqs(rfqSet, client.response.data.token);
       });
   });
 }
