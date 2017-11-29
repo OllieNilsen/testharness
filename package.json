@@ -12,6 +12,7 @@
   "dependencies": {
     "@spokedev/np_aws_utils": "0.0.1",
     "bluebird": "^3.5.0",
+    "dotenv": "^4.0.0",
     "faker": "^4.1.0",
     "pg-promise": "^7.0.2",
     "rambda": "^0.5.6",
