@@ -17,6 +17,13 @@ const u = require('./utils');
 function createRfq(payload) {
   return {
     lit: false,
+    requestGroup: [
+      "8f5db820-1377-462f-ae3e-98612531deee",
+      "ad3fd6d9-182f-4fbd-b464-a620bc938252",
+      "1977bf7a-18c3-4368-a887-22753e8c25f5",
+      "8f94b1b7-bdc8-4bfa-9315-17f2ce6e84f5",
+      "e4d81fd7-2da3-49ae-880a-c278a779ec6f"
+    ],
     payload
   };
 }
@@ -24,7 +31,7 @@ function createRfq(payload) {
 async function makeRfqRequest(rfq) {
   const options = {
     method: "POST",
-    headers: { "x-spoke-client": clients.current.token },
+    headers: { "x-spoke-client": clients.current.data.token },
     uri: `${infra.spokeHub}/rfqs`,
     body: rfq,
     json: true
