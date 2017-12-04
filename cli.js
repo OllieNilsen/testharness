@@ -102,7 +102,6 @@ vorpal
 vorpal
   .command('provider create [name]', 'creates a provider')
   .alias('pc')
-  .option('-t --token', 'issues token for the provider')
   .action((args, cb) => {
     const issueToken = args.options.token ?
       () => main.providers.issueAuthToken().then(main.utils.logResponse) :
@@ -110,20 +109,10 @@ vorpal
 
     return main.providers.create(undefined,args.name)
       .then(main.utils.logResponse)
-      .then(issueToken)
       .then(() => cb())
       .catch(error => cb(error));
   });
 
-vorpal
-  .command('provider issue token', 'creates a auth token for the provider')
-  .alias('pt')
-  .action((args, cb) => {
-    return main.providers.issueAuthToken()
-      .then(main.utils.logResponse)
-      .then(() => cb())
-      .catch(error => cb(error));
-  });
 
 vorpal
   .command('provider getRFQ', 'gets an RFQ')

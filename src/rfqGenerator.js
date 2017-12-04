@@ -18,11 +18,11 @@ function createRfq(payload) {
   return {
     lit: false,
     requestGroup: [
-      "8f5db820-1377-462f-ae3e-98612531deee",
-      "ad3fd6d9-182f-4fbd-b464-a620bc938252",
-      "1977bf7a-18c3-4368-a887-22753e8c25f5",
-      "8f94b1b7-bdc8-4bfa-9315-17f2ce6e84f5",
-      "e4d81fd7-2da3-49ae-880a-c278a779ec6f"
+     "3ca8d000-a5cd-49a4-942f-55e167649a5d",
+      "331d9a51-2ae9-4a4d-aaf4-7b029ee96faf",
+      "24e0de54-fb2d-4927-b39c-4e960222d4ad",
+      "66ebe7d4-9885-43c7-aa3e-6af3ac8b4dfe",
+      "24136da6-57c7-4f34-88e1-15ceb2697e63"
     ],
     payload
   };
@@ -37,7 +37,7 @@ async function makeRfqRequest(rfq) {
     json: true
   }
   try {
-    const result = await rp(options);
+    const result = await rp(options);cartesian
     console.log(result);
     return result;
   } catch (e) {

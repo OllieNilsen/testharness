@@ -1,4 +1,4 @@
-const AWS = require('@spokedev/np_aws_utils');
+  const AWS = require('@spokedev/np_aws_utils');
 const lambda = new AWS.Lambda({ region: "eu-west-1" });
 const request = require('request-promise');
 const R = require('ramda');
@@ -32,7 +32,7 @@ class Consumer {
   }
 
   create(mId, name) {
-    const marketId = mId || '01187586-b69e-4a95-912e-109165029f78';
+    const marketId = mId || '6bb462ba-c029-4721-878a-333ca48fb639';
     const consumerId = uuidV4();
     const consumer = data[this.ct].call(undefined, name);
     return request({
