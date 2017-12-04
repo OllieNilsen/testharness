@@ -24,7 +24,7 @@ function createRfq(payload) {
       "331d9a51-2ae9-4a4d-aaf4-7b029ee96faf",
       "24e0de54-fb2d-4927-b39c-4e960222d4ad",
       "66ebe7d4-9885-43c7-aa3e-6af3ac8b4dfe",
-      "24136da6-57c7-4f34-88e1-15ceb2697e63"
+      "638775fe-cc94-47ee-b2ee-1205730548fe"
     ],
     payload
   };
