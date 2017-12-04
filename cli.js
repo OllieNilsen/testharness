@@ -3,24 +3,38 @@
 process.env.minimumLogLevel = 'fatal';
 const main = require('./main');
 const vorpal = require('vorpal')();
+const requireDir = require('require-dir');
+const R = require('ramda');
 
 let lastRFQ = { rfqId: null };
 let lastQuote = { rfqId: null, quoteId: null };
 
-const requireDir = require('require-dir');
-const configs = requireDir('./config/rfqProperties');
-const R = require('ramda');
-
+if(process.env.debugger){
+  const configs = requireDir(`${__dirname}/config/scoutSet`);
+  return main.rfqGenerator.execute(configs)
+    .then(() => cb())
+    .catch(console.log);
+}
 /************ client *************/
 vorpal
   .command('generate rfqs', 'Recursively generates RFQs and Quotes')
   .alias('gen')
   .action((args, cb) => {
-    return main.rfqGenerator.rfqs.execute(R.values(configs))
+    const configs = requireDir('./config/rfqProperties');
+    return main.rfqGenerator.execute(configs)
       .then(() => cb())
       .catch(console.log);
   });
 
+vorpal
+  .command('generate scout', 'Generates a scout set')
+  .alias('scout')
+  .action((args, cb) => {
+    const configs = requireDir(`${__dirname}/config/scoutSet`);
+    return main.rfqGenerator.execute(configs)
+      .then(() => cb())
+      .catch(console.log);
+  });
 
 vorpal
   .command('client', 'logs the current client')
