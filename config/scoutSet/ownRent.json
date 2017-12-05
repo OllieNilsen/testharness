@@ -2,7 +2,7 @@
   {
     "path": "mainPolicyHolder/info/dob",
     "type": "list",
-    "value": [ -702892810655, -82609837931, 537673059203, 892120533245 ]
+    "value": [ 892120533245 ]
   },
   {
     "path": "mainPolicyHolder/info/gender",
@@ -49,7 +49,7 @@
   {
     "path": "coverAmount",
     "type": "list",
-    "value": [30000]
+    "value": [40000]
   },
   {
     "path": "whatToInsure",
@@ -84,6 +84,7 @@
     "type": "list",
     "value": [
       "Semi-detached house"
+
     ]
   },
   {
@@ -98,7 +99,8 @@
     "path": "home/ownOrRent",
     "type": "list",
     "value": [
-      "own"
+      "own",
+      "rent"
     ]
   },
   {

@@ -2,13 +2,14 @@
   {
     "path": "mainPolicyHolder/info/dob",
     "type": "list",
-    "value": [ -702892810655, -82609837931, 537673059203, 892120533245 ]
+    "value": [ 892120533245 ]
   },
   {
     "path": "mainPolicyHolder/info/gender",
     "type": "list",
     "value": [
-      "Female"
+      "Female",
+      "Male"
     ]
   },
   {

@@ -2,7 +2,7 @@
   {
     "path": "mainPolicyHolder/info/dob",
     "type": "list",
-    "value": [ -702892810655, -82609837931, 537673059203, 892120533245 ]
+    "value": [ 892120533245 ]
   },
   {
     "path": "mainPolicyHolder/info/gender",
@@ -49,7 +49,7 @@
   {
     "path": "coverAmount",
     "type": "list",
-    "value": [30000]
+    "value": [40000]
   },
   {
     "path": "whatToInsure",
@@ -84,6 +84,7 @@
     "type": "list",
     "value": [
       "Semi-detached house"
+
     ]
   },
   {
@@ -119,14 +120,14 @@
     "path": "home/numberAdults",
     "type": "list",
     "value": [
-      1
+      2
     ]
   },
   {
     "path": "home/numberChildren",
     "type": "list",
     "value": [
-      2
+      1
     ]
   },
   {
@@ -182,7 +183,11 @@
     "path": "home/mainDoorLockType",
     "type": "list",
     "value": [
-      "key-operated multipoint lock"
+      "key-operated multipoint lock",
+      "5-lever mortice deadlock",
+      "5 lever mortice deadlock conforming to BS 3621",
+      "Rim automatic deadlatch with key-locking handle",
+      "A different type of lock"
     ]
   },
   {
