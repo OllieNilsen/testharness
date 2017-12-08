@@ -24,7 +24,8 @@ function createRfq(payload) {
       "331d9a51-2ae9-4a4d-aaf4-7b029ee96faf",
       "24e0de54-fb2d-4927-b39c-4e960222d4ad",
       "66ebe7d4-9885-43c7-aa3e-6af3ac8b4dfe",
-      "638775fe-cc94-47ee-b2ee-1205730548fe"
+      "638775fe-cc94-47ee-b2ee-1205730548fe",
+      "2c1774e7-084c-4c89-aa7f-ef843921f522"
     ],
     payload
   };
@@ -102,8 +103,9 @@ async function throttleRfqs(rfqSet, token) {
 async function executeRfqConfigs(configs) {
   const [configNames, configValues] = [R.keys(configs), R.values(configs)];
   const marketId = undefined;
+  const clientNamePrefix = `${faker.hacker.noun().replace(/ /g, '')}1${faker.hacker.noun().replace(/ /g, '')}`;
   return Promise.mapSeries(configNames, async name => {
-    return clients.create(marketId, `${name} ${new Date().toString().split(' GMT')[0].replace(/ /g, '/')}`)
+    return clients.create(marketId, `${clientNamePrefix}_${name}${new Date().toString().split(' GMT')[0].replace(/ /g, '').replace(/\:/g, '')}`)
       .then(async (client) => {
         const pc = await postcodes.get();
         const c = R.map(
