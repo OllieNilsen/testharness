@@ -87,7 +87,7 @@ function augmentRfq(rfq) {
 
 async function throttleRfqs(rfqSet, token) {
   const throttleConfig = JSON.parse(await readFile(`${__dirname}/../config/throttle.json`, 'utf8'));
-  const currentSet = R.map(augmentRfq, cartesian.takeNext(throttleConfig.batchSize, rfqSet));
+  const currentSet = R.map(augmentRfq, u.takeNext(throttleConfig.batchSize, rfqSet));
 
   R.map(() => state.increment('totalRfqs'), Array(currentSet.length).fill(0));
   await Promise.map(currentSet, async rfqBody => makeRfqRequest(createRfq(rfqBody), token));

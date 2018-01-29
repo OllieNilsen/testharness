@@ -1,4 +1,5 @@
 const R = require('ramda');
+const u = require('./utils');
 
 
 
@@ -49,24 +50,6 @@ class Generators {
 
 const generators = new Generators();
 
-function takeNext(n, iterator) {
-  const a = [];
-  for (let i = 0; i < n; i++) {
-    const v = iterator.next();
-    if (!v.done) {
-      a.push(v.value);
-    }
-  }
-  return a;
-}
-
-const render = R.pipe(
-  // get values for iterators
-  R.map(R.prop('value')),
-  // map paths to nested object structures
-  obj => R.reduce((acc, key) => R.set(R.lensPath(key.split('/')), obj[key], acc), {}, R.keys(obj))
-);
-
 /**
  * Generator function to generate all combinations of properties for an RFQ.
  * It takes a sources object as a param to invoke appropriate generators for the
@@ -88,7 +71,7 @@ function *lazyCartesian(sources) {
   let values = R.map(i => i.next(), iterators);//initialise the iterators
 
   // yield the rendered version of the values object.
-  yield render(values);
+  yield u.render(values);
 
   /**
    * Re-initiates an iterator. It takes a key-value pair as input and returns a
@@ -116,7 +99,7 @@ function *lazyCartesian(sources) {
     )(values);
 
 
-    const rendered = render(values);
+    const rendered = u.render(values);
     if (allDone) {
       // All sub-iterators are done, so return, so that the mother-iterator is set to
       // `done`, too
@@ -130,6 +113,5 @@ function *lazyCartesian(sources) {
 }
 
 module.exports = {
-  takeNext,
   lazyCartesian
 };

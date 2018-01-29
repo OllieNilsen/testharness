@@ -5,7 +5,6 @@ chai.use(sinonChai);
 
 
 describe('sources', () => {
-
   it('should be an object', () => {
     require('../src/sources').should.be.a('function');
   });
