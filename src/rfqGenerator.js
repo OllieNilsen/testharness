@@ -115,7 +115,6 @@ async function executeRfqConfigs(configs) {
         const sources = new cartesian.Sources();
         c.forEach(p => sources[p.type](p.path, p.value));
         const rfqSet = cartesian.lazyCartesian(sources);
-        state.totalRfqsToGenerate = cartesian.sourceCountArray.reduce((a, b) => a * b, 1);
         return throttleRfqs(rfqSet, client.response.data.token);
       });
   });
