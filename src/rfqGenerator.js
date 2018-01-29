@@ -1,4 +1,5 @@
 const cartesian = require('./cartesian');
+const Sources = require('./sources');
 const rp = require('request-promise');
 const throttleConfig = require('../config/throttle');
 const tokenConfig = require('../config/infrastructure');
@@ -40,7 +41,7 @@ async function makeRfqRequest(rfq) {
     json: true
   };
   try {
-    const result = await rp(options);cartesian
+    const result = await rp(options);
     console.log(result);
     return result;
   } catch (e) {
@@ -112,7 +113,7 @@ async function executeRfqConfigs(configs) {
           R.ifElse(p => p.path === 'home/postcode', p => R.set(R.lensProp('value'), pc, p), R.identity),
           configValues[configNames.indexOf(name)]
         );
-        const sources = new cartesian.Sources();
+        const sources = new Sources();
         c.forEach(p => sources[p.type](p.path, p.value));
         const rfqSet = cartesian.lazyCartesian(sources);
         return throttleRfqs(rfqSet, client.response.data.token);

@@ -2,6 +2,7 @@ const sinonChai = require('sinon-chai');
 const chai = require('chai');
 const should = chai.should();
 const sut = require('../src/cartesian');
+const Sources = require('../src/sources');
 chai.use(sinonChai);
 
 describe('index', () => {
@@ -12,7 +13,7 @@ describe('index', () => {
   describe('takeNext', () => {
     let cartesian, sources;
     beforeEach(() => {
-      sources = new sut.Sources();
+      sources = new Sources();
       sources.list('something', [1, 2])
       sources.boolean('lit');
       sources.numeric('age', { min: 24, max: 25, step: 1 });
