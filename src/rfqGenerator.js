@@ -1,4 +1,5 @@
 const cartesian = require('./cartesian');
+const RandomGenerator = require('./randomGenerator');
 const Sources = require('./sources');
 const rp = require('request-promise');
 const throttleConfig = require('../config/throttle');
@@ -21,7 +22,7 @@ function createRfq(payload) {
   return {
     lit: false,
     requestGroup: [
-     "3ca8d000-a5cd-49a4-942f-55e167649a5d",
+      "3ca8d000-a5cd-49a4-942f-55e167649a5d",
       "331d9a51-2ae9-4a4d-aaf4-7b029ee96faf",
       "24e0de54-fb2d-4927-b39c-4e960222d4ad",
       "66ebe7d4-9885-43c7-aa3e-6af3ac8b4dfe",
@@ -121,7 +122,15 @@ async function executeRfqConfigs(configs) {
   });
 }
 
-module.exports =
-  {
-    execute: executeRfqConfigs
-  };
+async function sendRandomRfqs(numRfqs, config) {
+  const sources = new Sources();
+  R.forEach(s => sources[s.type](s.path, s.value), config);
+  const randomGenerator = new RandomGenerator(sources);
+  const rfqsToSend = u.takeNext(numRfqs, randomGenerator.randomRfqs());
+  return Promise.mapSeries(rfqsToSend, rfq =>  makeRfqRequest(createRfq(rfq)));
+}
+
+module.exports = {
+  executeCartesian: executeRfqConfigs,
+  executeRandom: sendRandomRfqs
+};

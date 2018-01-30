@@ -11,7 +11,7 @@ let lastQuote = { rfqId: null, quoteId: null };
 
 if(process.env.debugger){
   const configs = requireDir(`${__dirname}/config/scoutSet`);
-  return main.rfqGenerator.execute(configs)
+  return main.rfqGenerator.executeCartesian(configs)
     .then(() => cb())
     .catch(console.log);
 }
@@ -21,9 +21,24 @@ vorpal
   .alias('gen')
   .action((args, cb) => {
     const configs = requireDir('./config/rfqProperties');
-    return main.rfqGenerator.execute(configs)
+    return main.rfqGenerator.executeCartesian(configs)
       .then(() => cb())
       .catch(console.log);
+  });
+
+vorpal
+  .command('generate random rfqs [num]', 'Generates a number of random rfqs.')
+  .alias('rand')
+  .action(async (args, cb) => {
+    try {
+      const num = args.num || 1;
+      const conf = require('./config/randomRfqs/config.json');
+      await main.rfqGenerator.executeRandom(num, conf);
+    } catch(e) {
+      console.log(e);
+    } finally {
+      cb();
+    }
   });
 
 vorpal
@@ -31,9 +46,9 @@ vorpal
   .alias('scout')
   .action((args, cb) => {
     const configs = requireDir(`${__dirname}/config/scoutSet`);
-    return main.rfqGenerator.execute(configs)
-      .then(() => cb())
-      .catch(console.log);
+    return main.rfqGenerator.executeCartesian(configs)
+      .catch(console.log)
+      .finally(cb)
   });
 
 vorpal
