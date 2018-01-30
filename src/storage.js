@@ -71,7 +71,6 @@ class Storage {
   getItem(pathToItem) {
     return readFile(_formatPath(pathToItem))
       .then(buffer => buffer.toString('utf8'))
-      .tap(console.log)
       .then(JSON.parse)
       .catch(console.log)
   }

@@ -1,4 +1,6 @@
 const cartesian = require('./cartesian');
+const RandomGenerator = require('./randomGenerator');
+const Sources = require('./sources');
 const rp = require('request-promise');
 const throttleConfig = require('../config/throttle');
 const tokenConfig = require('../config/infrastructure');
@@ -20,7 +22,7 @@ function createRfq(payload) {
   return {
     lit: false,
     requestGroup: [
-     "3ca8d000-a5cd-49a4-942f-55e167649a5d",
+      "3ca8d000-a5cd-49a4-942f-55e167649a5d",
       "331d9a51-2ae9-4a4d-aaf4-7b029ee96faf",
       "24e0de54-fb2d-4927-b39c-4e960222d4ad",
       "66ebe7d4-9885-43c7-aa3e-6af3ac8b4dfe",
@@ -40,7 +42,7 @@ async function makeRfqRequest(rfq) {
     json: true
   };
   try {
-    const result = await rp(options);cartesian
+    const result = await rp(options);
     console.log(result);
     return result;
   } catch (e) {
@@ -86,7 +88,7 @@ function augmentRfq(rfq) {
 
 async function throttleRfqs(rfqSet, token) {
   const throttleConfig = JSON.parse(await readFile(`${__dirname}/../config/throttle.json`, 'utf8'));
-  const currentSet = R.map(augmentRfq, cartesian.takeNext(throttleConfig.batchSize, rfqSet));
+  const currentSet = R.map(augmentRfq, u.takeNext(throttleConfig.batchSize, rfqSet));
 
   R.map(() => state.increment('totalRfqs'), Array(currentSet.length).fill(0));
   await Promise.map(currentSet, async rfqBody => makeRfqRequest(createRfq(rfqBody), token));
@@ -112,16 +114,23 @@ async function executeRfqConfigs(configs) {
           R.ifElse(p => p.path === 'home/postcode', p => R.set(R.lensProp('value'), pc, p), R.identity),
           configValues[configNames.indexOf(name)]
         );
-        const sources = new cartesian.Sources();
+        const sources = new Sources();
         c.forEach(p => sources[p.type](p.path, p.value));
         const rfqSet = cartesian.lazyCartesian(sources);
-        state.totalRfqsToGenerate = cartesian.sourceCountArray.reduce((a, b) => a * b, 1);
         return throttleRfqs(rfqSet, client.response.data.token);
       });
   });
 }
 
-module.exports =
-  {
-    execute: executeRfqConfigs
-  };
+async function sendRandomRfqs(numRfqs, config) {
+  const sources = new Sources();
+  R.forEach(s => sources[s.type](s.path, s.value), config);
+  const randomGenerator = new RandomGenerator(sources);
+  const rfqsToSend = u.takeNext(numRfqs, randomGenerator.randomRfqs());
+  return Promise.mapSeries(rfqsToSend, rfq =>  makeRfqRequest(createRfq(rfq)));
+}
+
+module.exports = {
+  executeCartesian: executeRfqConfigs,
+  executeRandom: sendRandomRfqs
+};

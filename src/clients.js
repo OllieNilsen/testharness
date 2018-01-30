@@ -39,7 +39,6 @@ class Client extends Consumer {
   }
 
 
-
   acceptQuote(token, rfqId, quoteId) {
     return request({
       uri: `${config.spokeHub}/rfqs/${rfqId}/quotes/${quoteId}`,

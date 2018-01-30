@@ -7,6 +7,12 @@ const t = (f, x) => {
 class U {
   constructor() {
     this.tap = R.curry(t);
+    this.render = R.pipe(
+      // get values for iterators
+      R.map(R.prop('value')),
+      // map paths to nested object structures
+      obj => R.reduce((acc, key) => R.set(R.lensPath(key.split('/')), obj[key], acc), {}, R.keys(obj))
+    );
   }
 
   wait(delay = 1000){
@@ -36,6 +42,18 @@ class U {
       resolve(response);
     });
   }
+
+  takeNext(n, iterator) {
+    const a = [];
+    for (let i = 0; i < n; i++) {
+      const v = iterator.next();
+      if (!v.done) {
+        a.push(v.value);
+      }
+    }
+    return a;
+  }
+
 }
 
 module.exports = new U();
