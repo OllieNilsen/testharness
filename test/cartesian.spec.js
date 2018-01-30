@@ -1,6 +1,7 @@
 const sinonChai = require('sinon-chai');
 const chai = require('chai');
 const should = chai.should();
+const u = require('../src/utils')
 const sut = require('../src/cartesian');
 const Sources = require('../src/sources');
 chai.use(sinonChai);
@@ -22,7 +23,7 @@ describe('index', () => {
 
     it('should yield all possible combinations of the sources', () => {
 
-      sut.takeNext(8, cartesian).should.eql([
+      u.takeNext(8, cartesian).should.eql([
         {
           "age": 24,
           "something": 1,
@@ -68,12 +69,12 @@ describe('index', () => {
     });
 
     it('should stop when it has yielded all possible combinations', () => {
-      sut.takeNext(8, cartesian).length.should.equal(8);
-      sut.takeNext(16, cartesian).length.should.equal(0);
+      u.takeNext(8, cartesian).length.should.equal(8);
+      u.takeNext(16, cartesian).length.should.equal(0);
     });
 
     it('should not return more combinations than the number of possible combinations', () => {
-      sut.takeNext(10, cartesian).length.should.equal(8);
+      u.takeNext(10, cartesian).length.should.equal(8);
     });
   });
 

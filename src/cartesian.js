@@ -2,12 +2,11 @@ const R = require('ramda');
 const u = require('./utils');
 
 
-
 /**
  * Class with generator methods to generate iterators of the three types `numeric`,
  * `list`, and `boolean`.
  */
-class Generators {
+class FieldGenerators {
 
   /**
    * Generator for a numeric iterator with min, max values and step dictating difference
@@ -48,7 +47,7 @@ class Generators {
 
 }
 
-const generators = new Generators();
+const generators = new FieldGenerators();
 
 /**
  * Generator function to generate all combinations of properties for an RFQ.
@@ -80,18 +79,19 @@ function *lazyCartesian(sources) {
    * @returns {[*,*]}
    */
   const recurse = (pair) => {
-    iterators[pair[0]] = generators[sources[pair[0]].type](sources[pair[0]].value);
-    return [pair[0], iterators[pair[0]].next()];
+    [key, value] = pair
+    iterators[key] = generators[sources[key].type](sources[key].value);
+    return [key, iterators[key].next()];
   };
 
   while (!allDone) {
     values = R.pipe(
       R.toPairs, // convert object keys/values into key/value array pairs
-      R.splitWhen(val => val[1].done === false),// split array into initial, finished, and final (not all finished) iterators.
-      v => [R.map(recurse, v[0]), v[1]],// reset all the initial, finished, iterators
+      R.splitWhen(([key, val]) => val.done === false),// split array into initial, finished, and final (not all finished) iterators.
+      ([finished, unfinished]) => [R.map(recurse, finished), unfinished],// reset all the initial, finished, iterators
       R.ifElse(
-        v => v[1].length, // if there are unfinished iterators
-        R.over(R.lensPath([1, 0]), pair => [pair[0], iterators[pair[0]].next()]), //increment the first unfinished iterator
+        ([finished, unfinished]) => unfinished.length, // if there are unfinished iterators
+        R.over(R.lensPath([1, 0]), ([key, val]) => [key, iterators[key].next()]), //increment the first unfinished iterator
         R.tap(() => allDone = true) // else, set `allDone` to `true` and pass array on unchanged
       ),
       R.unnest, //flatten the arrayq
