@@ -72,7 +72,7 @@
     "path": "policyStart",
     "type": "list",
     "value": [
-      1508422602000
+      3600000
     ]
   },
   {

@@ -19,7 +19,7 @@ class U {
      return new Promise(resolve => setTimeout(resolve, delay));
   }
   randomNumberBetween(min, max) {
-    return min + Math.round(Math.random() * max);
+    return min + Math.round(Math.random() *  (max - min));
   }
 
   logResponse(response) {

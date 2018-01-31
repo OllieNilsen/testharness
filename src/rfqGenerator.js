@@ -2,10 +2,7 @@ const cartesian = require('./cartesian');
 const RandomGenerator = require('./randomGenerator');
 const Sources = require('./sources');
 const rp = require('request-promise');
-const throttleConfig = require('../config/throttle');
-const tokenConfig = require('../config/infrastructure');
 const infra = require('../config/infrastructure.json');
-const storage = require('./storage');
 const faker = require('faker');
 const clients = require('./clients');
 const postcodes = require('./postcodes');
@@ -13,6 +10,7 @@ const Promise = require('bluebird');
 const state = require('./state');
 const R = require('ramda');
 const u = require('./utils');
+const uuid = require('uuid');
 const fs = require('fs');
 const readFile = Promise.promisify(fs.readFile, { context: fs });
 
@@ -59,32 +57,21 @@ function augmentRfq(rfq) {
   const min = 100000000;
   const max = 999999999;
 
-
-  const emailDomains = [
-    'gmail.com', 'yahoo.com', 'hotmail.com', 'me.com', 'yahoo.co.uk', 'icloud.com'
-  ];
-
-
-  function getRandomIndex(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-  }
-
   const randomEmail = () => R.pipe(
-    R.map(faker.hacker.abbreviation),
-    R.map(x => x.toLowerCase()),
-    R.join(getRandomIndex(['', '_', '-', '1', '2', '3', '4', '5', '6'])),
-    x => x + Math.floor(Math.random() * 10000) + 10,
+    () => uuid().split('-').join(''),
+    x => x.substring(0, u.randomNumberBetween(5, 32)),
     x => x + '@',
-    x => x + getRandomIndex(['gmail.com', 'yahoo.com', 'hotmail.com', 'me.com', 'icloud.com', 'yahoo.co.uk'])
-  )(Array(Math.floor(Math.random() * 9) + 1));
+    x => x + u.returnRandom(['gmail.com', 'yahoo.com', 'hotmail.com', 'me.com', 'icloud.com', 'yahoo.co.uk'])
+  )();
   const fakePhonenumber = '07' + (Math.floor(Math.random() * (max - min)) + min);// fake uk mobile number
   const phoneSetter = R.set(R.lensPath(['mainPolicyHolder', 'mobileNumber']), fakePhonenumber);
   const emailSetter = R.set(R.lensPath(['mainPolicyHolder', 'email']), randomEmail());
   const fnSetter = R.set(R.lensPath(['mainPolicyHolder', 'info', 'firstName']), faker.name.firstName());
   const lnSetter = R.set(R.lensPath(['mainPolicyHolder', 'info', 'lastName']), faker.name.lastName());
-  const policyStartSetter = R.set(R.lensPath(['policyStart']), Date.now() + (60 * 60 * 48 * 1000));
+  const policyStartSetter = R.set(R.lensPath(['policyStart']), Date.now() + rfq.policyStart);
   return R.pipe(phoneSetter, emailSetter, fnSetter, lnSetter, policyStartSetter)(rfq);
 }
+
 
 async function throttleRfqs(rfqSet, token) {
   const throttleConfig = JSON.parse(await readFile(`${__dirname}/../config/throttle.json`, 'utf8'));
@@ -109,7 +96,7 @@ async function executeRfqConfigs(configs) {
   return Promise.mapSeries(configNames, async name => {
     return clients.create(marketId, `${clientNamePrefix}_${name}${new Date().toString().split(' GMT')[0].replace(/ /g, '').replace(/\:/g, '')}`)
       .then(async (client) => {
-        const pc = await postcodes.get();
+        const pc = await postcodes.get(100);
         const c = R.map(
           R.ifElse(p => p.path === 'home/postcode', p => R.set(R.lensProp('value'), pc, p), R.identity),
           configValues[configNames.indexOf(name)]
@@ -123,11 +110,16 @@ async function executeRfqConfigs(configs) {
 }
 
 async function sendRandomRfqs(numRfqs, config) {
+
   const sources = new Sources();
   R.forEach(s => sources[s.type](s.path, s.value), config);
   const randomGenerator = new RandomGenerator(sources);
   const rfqsToSend = u.takeNext(numRfqs, randomGenerator.randomRfqs());
-  return Promise.mapSeries(rfqsToSend, rfq =>  makeRfqRequest(createRfq(rfq)));
+  return Promise.mapSeries(rfqsToSend, async rfq => {
+    const postcode = await postcodes.get(1);
+    rfq  =  R.set(R.lensPath(['home', 'postcode']), postcode[0], rfq);
+    return makeRfqRequest(createRfq(augmentRfq(rfq)))
+  });
 }
 
 module.exports = {

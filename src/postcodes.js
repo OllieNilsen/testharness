@@ -23,7 +23,7 @@ const query = `WITH summary AS
                SELECT s.postcode FROM summary s
                WHERE s.rk = 1
                ORDER BY RANDOM()
-               LIMIT 100;`;
+               LIMIT $1;`;
 
 // Execute query and map results to an array of postcodes.
-module.exports.get = (async() => R.map(R.view(R.lensProp('postcode')), await db.query(query)));
+module.exports.get = (async(num) => R.map(R.view(R.lensProp('postcode')), await db.query(query, num)));
