@@ -68,7 +68,7 @@ function augmentRfq(rfq) {
   const emailSetter = R.set(R.lensPath(['mainPolicyHolder', 'email']), randomEmail());
   const fnSetter = R.set(R.lensPath(['mainPolicyHolder', 'info', 'firstName']), faker.name.firstName());
   const lnSetter = R.set(R.lensPath(['mainPolicyHolder', 'info', 'lastName']), faker.name.lastName());
-  const policyStartSetter = R.set(R.lensPath(['policyStart']), Date.now() + rfq.policyStart);
+  const policyStartSetter = R.set(R.lensPath(['policyS tart']), Date.now() + rfq.policyStart);
   return R.pipe(phoneSetter, emailSetter, fnSetter, lnSetter, policyStartSetter)(rfq);
 }
 
@@ -110,9 +110,13 @@ async function executeRfqConfigs(configs) {
 }
 
 async function sendRandomRfqs(numRfqs, config) {
+  // Create finalConfig by combining obligatory props with a random selection of optional props
+  const shuffledOptionalProps = config.optionalProps.sort(() => Math.random() - 0.5);
+  const numberOfOptionalProps = u.randomNumberBetween(0, config.optionalProps.length);
+  const finalConfig = R.unnest([config.obligatoryProps, shuffledOptionalProps.slice(0,numberOfOptionalProps)]);
 
   const sources = new Sources();
-  R.forEach(s => sources[s.type](s.path, s.value), config);
+  R.forEach(s => sources[s.type](s.path, s.value), finalConfig);
   const randomGenerator = new RandomGenerator(sources);
   const rfqsToSend = u.takeNext(numRfqs, randomGenerator.randomRfqs());
   return Promise.mapSeries(rfqsToSend, async rfq => {

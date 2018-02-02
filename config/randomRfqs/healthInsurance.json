@@ -1,0 +1,118 @@
+{
+  "obligatoryProps": [
+    {
+      "path": "policyHolder/title",
+      "type": "list",
+      "value": [
+        "Mr",
+        "Miss",
+        "Mrs",
+        "Ms",
+        "Mr",
+        "Miss",
+        "Mrs",
+        "Ms",
+        "Mr",
+        "Miss",
+        "Mrs",
+        "Ms",
+        "Dr",
+        "Professor",
+        "Reverend",
+        "Sir",
+        "Lord",
+        "Lady"
+      ]
+    },
+    {
+      "path": "policyHolder/forename",
+      "type": "list",
+      "value": [
+        "Susie"
+      ]
+    },
+    {
+      "path": "policyHolder/surname",
+      "type": "list",
+      "value": [
+        "Creek"
+      ]
+    },
+    {
+      "path": "policyHolder/gender",
+      "type": "list",
+      "value": [
+        "Male",
+        "Female"
+      ]
+    },
+    {
+      "path": "policyHolder/dob",
+      "type":"numeric",
+      "value": {
+        "min": -1041379200000,
+        "step": 1000000,
+        "max": 915148800000
+      }
+    },
+    {
+      "path": "policyHolder/postcode",
+      "type": "list",
+      "value": ["E6 5TS"]
+    },
+    {
+      "path":"policyHolder/occupation",
+      "type":"list",
+      "value":[
+        "Accountant",
+        "Administrator",
+        "Civil Servant",
+        "Director",
+        "Engineer",
+        "Housewife/husband",
+        "IT Professional",
+        "Manager",
+        "Professional sportsperson",
+        "Student",
+        "Teacher",
+        "Other"
+      ]
+    },
+    {
+      "path": "policyHolder/health/isSmoker",
+      "type":"boolean"
+    },
+    {
+      "path":"policyHolder/health/yearsQuit",
+      "type":"list",
+      "value":[
+        0,
+        0.5,
+        1,
+        2,
+        3,
+        5
+      ]
+    },
+    {
+      "path":"policyHolder/health/previousMedicalCondition",
+      "type":"boolean"
+    },
+    {
+      "path":"policy/startDate,
+      "type":"",
+      "value":
+    },
+    {
+      "path":,
+      "type":,
+      "value":
+    },
+    {
+      "path":,
+      "type":,
+      "value":
+    }
+  ],
+  "optionalProps": []
+}

@@ -32,7 +32,7 @@ vorpal
   .action(async (args, cb) => {
     try {
       const num = args.num || 1;
-      const conf = require('./config/randomRfqs/config.json');
+      const conf = require('./config/randomRfqs/contentInsurance.json');
       await main.rfqGenerator.executeRandom(num, conf);
     } catch(e) {
       console.log(e);
